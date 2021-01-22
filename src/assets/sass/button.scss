@@ -1,10 +1,10 @@
 .rem-btn {
   width: 174px;
-  height: 60px;
+  height: 45px;
   border-radius: 5px !important;
   opacity: 1;
-  font-size: 20px !important;
-  font-weight: 700 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
   &.gold_color {
     color: $goldColor !important;
   }
@@ -12,12 +12,12 @@
     text-decoration: none;
   }
   &.mobile-btn-height {
-    height: 60px !important;
+    height: 45px !important;
   }
   &.main {
     background: $primaryColor 0 0 no-repeat padding-box !important;
     width: 174px;
-    height: 60px;
+    height: 45px;
     border: 1px solid $primaryColor !important;
     padding: 10px !important;
     &:hover {

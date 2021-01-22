@@ -4,18 +4,33 @@ import VueRouter from "vue-router";
 
 const Login = () => import('../views/login')
 const Ml = () => import('../views/MasterLayout.vue')
-
-
+const Products = () => import('../views/Products/products.vue')
+const AddProduct = () => import('../views/Products/addProducts.vue')
 
 
 Vue.use(VueRouter);
 
 let routes = [
- 
   {
     path: "/",
     name: "login",
     component: Login,
+    meta: {
+      guest: true,
+    },
+  },
+  {
+    path: "/add-product",
+    name: "add_product",
+    component: AddProduct,
+    meta: {
+      guest: true,
+    },
+  },
+  {
+    path: "/products",
+    name: "products",
+    component: Products,
     meta: {
       guest: true,
     },

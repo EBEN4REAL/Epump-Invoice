@@ -10,10 +10,13 @@ a {
  }
  
  .s-layout__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
+    width: 83%;
+    margin-left: 17%;
+    padding-left: 15px;
+    padding-right: 15px;
+    background: #fafafa;
+    min-height: 100vh;
+    padding-top: 15px;
  }
  
  /* Sidebar */
@@ -35,7 +38,7 @@ a {
     left: 0em;
     overflow: hidden;
     transition: all .3s ease-in;
-    width: 15em;
+    width: 17%;
     height: 100%;
     background: #d5dfe8;
     color: $primaryColor;
@@ -54,7 +57,7 @@ a {
     // left: 0;
     // margin: 0;
     // padding: 0;
-    // width: 15em;
+    // width: 17%;
  }
  
 //  .s-sidebar__nav ul li {
@@ -69,6 +72,10 @@ a {
     color: $primaryColor;
     font-weight: 600;
     font-size: 16px;
+    &.active {
+        background: #2c1152;
+        color: $goldColor
+    }
  }
  
  
@@ -112,13 +119,13 @@ a {
 //     .s-sidebar__nav:focus,
 //     .s-sidebar__trigger:hover + .s-sidebar__nav,
 //     .s-sidebar__trigger:focus + .s-sidebar__nav {
-//        width: 15em;
+//        width: 17%;
 //     }
 //  }
  
 //  @media (min-width: 68em) {
 //     .s-layout__content {
-//        margin-left: 15em;
+//        margin-left: 17%;
 //     }
     
 //     .s-sidebar__trigger {
@@ -126,7 +133,7 @@ a {
 //     }
     
 //     .s-sidebar__nav {
-//        width: 15em;
+//        width: 17%;
 //     }
     
 //     .s-sidebar__nav ul {
