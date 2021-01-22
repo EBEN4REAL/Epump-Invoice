@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 
 
 const Login = () => import('../views/login')
+const Ml = () => import('../views/MasterLayout.vue')
 
 
 
@@ -15,6 +16,14 @@ let routes = [
     path: "/",
     name: "login",
     component: Login,
+    meta: {
+      guest: true,
+    },
+  },
+  {
+    path: "/ml",
+    name: "ml",
+    component: Ml,
     meta: {
       guest: true,
     },

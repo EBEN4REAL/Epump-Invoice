@@ -16,6 +16,10 @@ import "vue-toastification/dist/index.css";
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import { GridPlugin } from "@syncfusion/ej2-vue-grids";
+import VueSidebarMenu from 'vue-sidebar-menu'
+import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
+
+Vue.use(VueSidebarMenu)
 
 Vue.config.productionTip = false
 
