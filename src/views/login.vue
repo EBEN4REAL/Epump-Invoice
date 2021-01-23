@@ -1,6 +1,6 @@
 <template>      
     <div>
-         <div class="login_wrapper">
+         <div class="form-wrapper login">
             <div class="text-center py-5">
                 <img src="@/assets/img/epump-logo.png"  />
             </div>

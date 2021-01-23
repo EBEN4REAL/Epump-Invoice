@@ -4,7 +4,7 @@
         <MasterLayout>
             <div class="py-4">
                 <h5 class="primary-color text-center">Add a product or service</h5>
-                <div class="login_wrapper">
+                <div class="form-wrapper add_product">
                     <form class="mt-5">
                         <div class="mt-3">
                             <label>Name</label>

@@ -1,9 +1,9 @@
 .rem-btn {
-  width: 174px;
+  // width: 174px;
   height: 45px;
   border-radius: 5px !important;
   opacity: 1;
-  font-size: 16px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   &.gold_color {
     color: $goldColor !important;
@@ -34,6 +34,29 @@
       background-color: #FFD668 !important;
     }
   }
+}
+.rounded-button {
+  border: 1px solid $primaryColor;
+  border-radius: 25px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 15px 5px 15px;
+  &.transparent {
+    color: $primaryColor;
+    background: transparent;
+  }
+  &.colored {
+    color: $goldColor;
+    background: $primaryColor;
+  }
+}
+.invoice-edit-button {
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 15px 5px 15px;
+  background: $sideNavBg;
+  border: none !important;
 }
 .home_buttons_over {
   position: relative;

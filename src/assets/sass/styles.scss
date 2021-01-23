@@ -5,6 +5,7 @@
 @import "utils";
 @import "sidebar";
 @import "modal";
+@import "invoice";
 
 @import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap");
 
@@ -24,10 +25,15 @@ body {
   font-family: "Nunito", sans-serif !important;
 }
 
-.login_wrapper{
+.form-wrapper{
   margin: 0 auto;
-  width: 40%;
   margin-top: 20px;
+  &.login {
+    width: 30%;
+  }
+  &.add_product {
+    width: 50%;
+  }
 }
 input {
   height: 45px;
@@ -39,6 +45,8 @@ input {
 }
 label{
   font-weight: 600;
+  margin-bottom: 0px !important;
+  font-size: 13px;
 }
 .v--modal {
   overflow: auto !important;
@@ -46,4 +54,14 @@ label{
 .modal-form-wrapper {
   width: 70%;
   margin: 0 auto;
+}
+.v--modal-overlay {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+.dialog-container {
+  width: 80%;
+  margin: 0 auto;
+}
+.cursor-pointer {
+  cursor: pointer;
 }

@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import Router from "@/router/index";
 
 Vue.use(Vuex);
 
@@ -18,7 +17,7 @@ export default new Vuex.Store({
     setUserName(state, payload) {
       state.userName = payload
       console.log(payload)
-    },
+    },  
   },
   modules: {}
 });
