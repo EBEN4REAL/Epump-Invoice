@@ -10,7 +10,7 @@
                 <div class="mt-3">
                     <label>Email</label>
                     <div class="form_input">
-                        <input type="email"  class="form-control"  v-model="userName"/>
+                        <input type="email"  class="form-control"  v-model="email"/>
                     </div>
                 </div>
                 <div class="mt-3">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <button class=" rem-btn w-100 main mobile-btn-height gold_color mt-5" 
-                    @click="login($event, 'verifyEmail')"
+                    @click="signIn($event)"
                     :disabled="isButtonDisabled ? true : null"
                     :style="[
                         isButtonDisabled
@@ -50,113 +50,65 @@ export default {
     },
     data() {
         return {
-            userName: null,
+            email: null,
             password: null,
-            isButtonDisabled: false,
-            otp: null,
-            view: '',
-            transaction_reference: '',
-            mode: ''
+            isButtonDisabled: false
         }
     },
     methods: {
-        handleClick() {
-            this.view = ''
-        },
-        changeView($event, view) {
-            $event.preventDefault()
-            this.view = view
-        },
         validateEmail(email) {
             if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
                 return true;
             }
             return false;
         },
-        getOTP(e) {
-            e.preventDefault()
-            if(!this.otp) {
-                this.$toast("OTP is required", {
-                    type: "error",
-                    timeout: 3000,
-                });
-                return
-            }
-            this.isButtonDisabled = true;
-            $('.actLoader').show();
-            let data  =  {
-                "otp": this.otp,
-                "mode": this.mode,
-                "reference": this.transaction_reference
-            }
-            this.axios.post(`${configObject.apiBaseUrl}/Account/VerifyAccount`, data)
-            .then(res => {
-                this.isButtonDisabled = false;
-                $('.actLoader').hide();
-                let message = this.mode == 'email' ? 'Email verified' : 'Phone verified'
-                this.$toast(message, {
-                    type: "success",
-                    timeout: 3000,
-                });
-                let loginDetails = {
-                    userName: this.userName,
-                    password: this.password
-                }
-                localStorage.setItem('remisLoginDetails', JSON.stringify(loginDetails))
-                this.view = ''
-            })
-            .catch(error => {
-                this.$toast(error.response.data.message, {
-                    type: "error",
-                    timeout: 5000
-                });
-                $('.actLoader').hide();
-                this.isButtonDisabled = false;
-            });
-        },
-        login($event) {
+        signIn($event) {
             $event.preventDefault();
-            if(!this.userName) {
-                this.$toast("Email is required", {
+            if(!this.email) {
+                 this.$toast("Email Required", {
                     type: "error",
-                    timeout: 3000,
+                    timeout: 3000
                 });
-                return
+                return;
             }else {
-                if(!this.validateEmail(this.userName)) {
+                if(!this.validateEmail(this.email)) {
                     this.$toast("Invalid Email Format", {
                         type: "error",
-                        timeout: 3000,
+                        timeout: 3000
                     });
                     return
                 }
             }
-            if(!this.password) {
-                this.$toast("Password is required", {
-                    type: "error",
+             if(!this.password) {
+                this.$toast("Password Field cannot be blank", {
+                    type: "error", 
                     timeout: 3000
                 });
-                return
+                return;
+            }
+            const data = {
+                userName: this.email,
+                password: this.password
             }
             this.isButtonDisabled = true;
-            $('.loader').show();
-            let data = {
-                userName: this.userName,
-                password: this.password,
-                deviceId: ''
-            }
+            $(".loader").show();
             this.axios
                 .post(
                 `${configObject.apiBaseUrl}/Account/login`, data)
                     .then(res => {
-                        this.isButtonDisabled = false;
                         $('.loader').hide();
-                        localStorage.setItem("remisCardUserDetails", JSON.stringify(res.data));
+                        this.isButtonDisabled = false;
+                        const roles = res.data.role.split(",");
+                        res.data.roles = roles
+                        
+                        localStorage.setItem("epumpInvoiceManager", JSON.stringify(res.data));
+
                         const decoded = jwt_decode(res.data.token);
                         const exp = decoded.exp * 1000;
                         localStorage.setItem('jwtExpiry', exp)
 
-                        this.$router.push({ name: "activate_card" });
+                        this.$router.push({ name: "invoice" });
+
                         this.$toast("Login Successful", {
                             type: "success",
                             timeout: 3000
@@ -165,30 +117,12 @@ export default {
                 .catch(error => {
                     this.isButtonDisabled = false;
                     $('.loader').hide();
-                    try {
-                        const res = JSON.parse(error.response.data.message)
-                        const message = res.responseMessage == 'Confirm Email' ? 'An OTP has been sent to your email, please input OTP below to confirm email' : res.responseMessage == 'Confirm Phone' ? 'An OTP has been sent to your phone, please input OTP below to confirm phone number'  :  res.responseMessage
-                        this.$toast(message, {
-                            type: "success",
-                            timeout: 5000
-                        });
-                        let medium
-                        if(res.responseMessage == 'Confirm Phone') {
-                            medium = 'phone'
-                        }else {
-                            medium = res.medium
-                        }
-                        this.mode = medium
-                        this.transaction_reference = res.transaction_reference
-                        this.view = 'otp'
-                        
-                    } catch(e) {
-                        this.$toast(error.response.data.message, {
-                            type: "error",
-                            timeout: 3000
-                        });
-                    }
+                    this.$toast(error.response.data.message, {
+                        type: "error",
+                        timeout: 3000
+                    });
                 });
+            
         },
     }
 }

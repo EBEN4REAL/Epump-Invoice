@@ -1,6 +1,6 @@
 <template>
    <div>
-        <div class="s-layout__sidebar">
+        <div class="s-layout__sidebar ">
             <!-- <a class="s-sidebar__trigger" href="#0">
                 <i class="fa fa-bars"></i>
             </a> -->
@@ -19,20 +19,15 @@
                             Products & Services
                         </router-link>
                     </li>
-                    <li>
-                        <router-link :to="{name:'tax'}" class="s-sidebar__nav-link">
-                            Tax
-                        </router-link>
-                    </li>
                 </ul>
             </nav>
-            </div>
-
-            <main class="s-layout__content">
-                <slot></slot>
-            </main>
+            <span class="logout_container bold-span cursor-pointer" @click="logout"><img src="@/assets/img/logout.png" width="20" class="mr-3"  /> Logout </span>
         </div>
-   </div>
+
+        <main class="s-layout__content">
+            <slot></slot>
+        </main>
+    </div>
 </template>
 <script>
 export default {
@@ -40,6 +35,12 @@ export default {
         return {
             route: this.$route.name
         }
-    }
+    },
+    methods: {
+        logout() {
+            localStorage.clear()
+            this.$router.push({name: 'login'})
+        }
+    },
 }
 </script>

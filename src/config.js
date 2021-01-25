@@ -12,8 +12,8 @@ let configObject = {
 
 
 function configObjectFunc() {
-  if (localStorage.getItem("remisCardUserDetails")) {
-    token = JSON.parse(localStorage.getItem("remisCardUserDetails")).token;
+  if (localStorage.getItem("epumpInvoiceManager")) {
+    token = JSON.parse(localStorage.getItem("epumpInvoiceManager")).token;
   }else {
     token = null;
   }
@@ -45,8 +45,8 @@ function configObjectFunc() {
 }
 
 function configObjectForUploadFunc() {
-  if (localStorage.getItem("remisCardUserDetails")) {
-    token = JSON.parse(localStorage.getItem("remisCardUserDetails")).token;
+  if (localStorage.getItem("epumpInvoiceManager")) {
+    token = JSON.parse(localStorage.getItem("epumpInvoiceManager")).token;
   }else {
     token = null;
   }

@@ -26,8 +26,25 @@
                         <div class="invoice-container mt-3">
                             <div class="add_customer_conainer">
                                 <div class="add_customer">
-                                    <div class="add_custoemr_card mt-3 ml-3">
-                                        <i class="fa fa-user-plus mr-2 primary-color" aria-hidden="true"></i> <span class="primary-color">Select Company</span>
+                                    <div class="row align-items-center" v-if="showCompanies">
+                                        <div class="col-md-9">
+                                             <div class="w-100 p-3" >
+                                                <select v-model="companyId" class="form-control" >
+                                                    <option disabled selected value="select company">select company</option>
+                                                    <option :value="cp.id" v-for="(cp,i) in companies" :key='i'>{{cp.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <i class="fa fa-times primary-color cursor-pointer" style="font-size: 20px" title="cancel" aria-hidden="true" @click="toggleCompaniesDropdown"></i>
+
+                                        </div>
+                                    </div>
+                                    <button class="rounded-button transparent ml-3 mt-2" v-if="showCompanies">Generate Invoice</button>
+                                    <div class="add_custoemr_card mt-3 ml-3" @click="toggleCompaniesDropdown" v-if="!showCompanies">
+                                        <span>
+                                            <i class="fa fa-building-o mr-2 primary-color" aria-hidden="true"></i> <span class="primary-color" >Select company</span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="invoice_details pr-3">
@@ -104,8 +121,7 @@
                                         <input type="text"  class="form-control" v-model="invoice.quantity"   />
                                     </div> 
                                     <div class="price pr-2">
-                                        <!-- <input type="text"  class="form-control"  v-model="invoice.price" pattern="^\₦\d{1,3}(,\d{3})*(\.\d+)?₦"/> -->
-                                        <input type="text" name="currency-field" id="currency-field" pattern="^\₦\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency" placeholder="price">
+                                        <input type="text" class="form-control" name="currency-field" id="currency" pattern="^\₦\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="" placeholder="price" v-model="invoice.price">
                                     </div>
                                     <div class="amount">
                                         <span class="primary-color mr-2">&#8358;  {{invoice.quantity * invoice.price}}.00</span>
@@ -191,6 +207,9 @@ export default {
                 search: { operator: "contains", ignoreCase: true },
             },
             invoiceNumber: 1,
+            showCompanies: false,
+            companies: [],
+            companyId:"select company",
             invoiceItems: [
                 {
                     item: 'Epump Go',
@@ -212,6 +231,7 @@ export default {
         }
     },
     mounted() {
+        this.getCompanies()
         Array.from(document.getElementsByTagName('input')).forEach(input => {
             if(!Array.from(input.classList).includes('form-control')) {
                 input.classList.add('form-control')
@@ -316,6 +336,20 @@ export default {
 
     },
     methods: {
+        getCompanies() {
+            this.axios
+            .get(
+                `${configObject.apiBaseUrl}/Company`, configObject.authConfig())
+                .then(res => {
+                    this.companies = res.data.data
+            })
+            .catch(error => {
+
+            });
+        },
+        toggleCompaniesDropdown(){
+            this.showCompanies = !this.showCompanies
+        },
         removeItem(i) {
             let items = [...this.invoiceItems]
             items.splice(i,1)

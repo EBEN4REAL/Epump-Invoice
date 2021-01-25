@@ -12,6 +12,7 @@ h1, h2 h3, h4,h5,h6 {
     cursor: pointer;
 }
 textarea:focus, 
+select.form-control:focus,
 textarea.form-control:focus, 
 input.form-control:focus, 
 input[type=text]:focus, 
