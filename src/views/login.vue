@@ -107,7 +107,7 @@ export default {
                         const exp = decoded.exp * 1000;
                         localStorage.setItem('jwtExpiry', exp)
 
-                        this.$router.push({ name: "invoice" });
+                        this.$router.push({ name: "invoices" });
 
                         this.$toast("Login Successful", {
                             type: "success",

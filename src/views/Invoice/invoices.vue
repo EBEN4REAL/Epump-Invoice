@@ -7,8 +7,15 @@
                         <div class="col-md-7">
                             <h4 class="primary-color"> Invoices</h4>
                         </div>
-                        <div class="col-md-5 text-right">
-                            <button class="rounded-button colored">Create an invoice</button>
+                        <div class="col-md-5 text-right create-invoice-dropdwon">
+                            <b-dropdown id="dropdown-right" right text="Create an invoice" variant="primary" class="m-2">
+                                <b-dropdown-item>
+                                    <router-link :to="{name: 'invoice'}">
+                                        Create an invoice
+                                    </router-link>
+                                </b-dropdown-item>
+                                <b-dropdown-item>Generate auto subscription</b-dropdown-item>
+                            </b-dropdown>
                         </div>
                     </div>
                     <div class="invoice-banner mt-3">
@@ -51,8 +58,8 @@
                     <div class="mt-3">
                         <form>
                             <div class="row ">
-                                <div class="col-md-3 padding-right-none position-relative">
-                                   <div class="dropdown-select-container cursor-pointer dropdown-parent" @click="showDropdown">
+                                <div class="col-md-4 padding-right-none position-relative">
+                                   <div class="dropdown-select-container cursor-pointer dropdown-parent" @click="toggleDropdown">
                                         <div class="row align-items-center  height-100 pl-3 pr-3">
                                             <div class="col-md-10">
                                                 <span class="dropdown-value">All customers</span>
@@ -62,7 +69,7 @@
                                             </div>
                                         </div>
                                    </div>
-                                   <div class="dropdown__content hide-dropdown">
+                                   <div class="dropdown__content" v-if="showDropdown">
                                        <div class="dropdown-select-wrapper m-3">
                                             <div class="row align-items-center">
                                                 <div class="col-md-1 text-right padding-right-none">
@@ -80,20 +87,42 @@
                                    </div>
                                 </div>
                                 <div class="col-md-2 padding-right-none">
-                                   <select class="form-control" >
-                                        <option disabled selected value="select company">All statuses</option>
-                                        <option >Draft</option>
-                                        <option >Paid</option>
-                                        <option >Overdue</option>
-                                    </select>
+                                     <vue-ctk-date-time-picker
+                                            id="DateTimePicker"
+                                            v-model="fromDate"
+                                            color="#370F70"
+                                            format="YYYY-MM-DD"
+                                            formatted="DD/MM/YYYY"
+                                            position="bottom"
+                                            :onlyDate="true"
+                                            :autoClose="true"
+                                            :label="fromLabel"
+                                            
+                                        />  
+                                       
                                 </div>
-                                <div class="col-md-5 padding-right-none">
+                                <div class="col-md-4 padding-right-none">
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <b-form-datepicker id="to__value_" v-model="from" class="mb-2"></b-form-datepicker>
+                                        <div class="col-md-6 padding-right-none">
+                                           <vue-ctk-date-time-picker
+                                                id="DateTimePicker"
+                                                v-model="toDate"
+                                                color="#370F70"
+                                                format="YYYY-MM-DD"
+                                                formatted="DD/MM/YYYY"
+                                                position="bottom"
+                                                :onlyDate="true"
+                                                :autoClose="true"
+                                                :label="toLabel"
+                                            />  
                                         </div>
                                         <div class="col-md-6">
-                                            <b-form-datepicker id="from__value_" v-model="to" class="mb-2"></b-form-datepicker>
+                                            <select class="form-control" >
+                                                <option disabled selected value="select company">All statuses</option>
+                                                <option >Draft</option>
+                                                <option >Paid</option>
+                                                <option >Overdue</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -105,20 +134,44 @@
                     </div>
                     <div class="mt-3">
                         <div class="filter-menu">
-                            <div class="filter-item mr-3 text-center">
-                                <span class="mr-2">Unpaid</span>
-                                <span class="counter mr-2">1</span>
+                            <div class="filter-item mr-3 text-center" @click="changeStatus('unpaid')" :class="[activeStatus === 'unpaid' ? 'active' : null]">
+                                <span class="mr-2" :class="[activeStatus === 'unpaid' ? 'active' : null]">Unpaid</span>
+                                <span class="counter mr-2">0</span>
                             </div>
-                            <div class="filter-item mr-3 active text-center">
-                                <span class="mr-2 active">Draft</span>
-                                <span class="counter mr-2">1</span>
+                            <div class="filter-item mr-3  text-center" @click="changeStatus('draft')" :class="[activeStatus === 'draft' ? 'active' : null]">
+                                <span class="mr-2 " :class="[activeStatus === 'draft' ? 'active' : null]">Draft</span>
+                                <span class="counter mr-2">0</span>
                             </div>
-                            <div class="filter-item text-center">
-                                <span class="mr-2">All invoices</span>
-                                <span class="counter mr-2">1</span>
+                            <div class="filter-item text-center" @click="changeStatus('all')" :class="[activeStatus === 'all' ? 'active' : null]">
+                                <span class="mr-2" :class="[activeStatus === 'all' ? 'active' : null]">All invoices</span>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="">
+                    <ejs-grid
+                        v-show="!showLoader"
+                        ref="dataGrid"
+                        :created="refreshGrid"
+                        :allowPaging="true"
+                        :allowSorting="true"
+                        :pageSettings="tableProps.pageSettings"
+                        :toolbar="tableProps.toolbar"
+                        :searchSettings="tableProps.search"
+                        :allowExcelExport="false"
+                        :allowPdfExport="false"
+                        :toolbarClick="toolbarClick"
+                        :allowTextWrap='true'
+                        :dataSource="data"
+                        >
+                        <e-columns>
+                            <e-column width="100" :template="invoiceTemplate" headerText="Status"></e-column>
+                            <e-column width="200" field="price" headerText="Date" ></e-column>
+                            <e-column width="200" field="price" headerText="Number" ></e-column>
+                            <e-column width="200" field="price" headerText="Amount Due" ></e-column>
+                            
+                        </e-columns>
+                    </ejs-grid>
                 </div>
             </div>
         </MasterLayout>
@@ -130,6 +183,7 @@ import configObject from "@/config";
 import TableLoader from "@/components/tableLoader/index";
 import Datepicker from 'vuejs-datepicker';
 import {Page,Sort,Toolbar,Search, groupAggregates} from "@syncfusion/ej2-vue-grids";
+import Temp from '@/components/Templates/invoices';
 
 
 import Jquery from 'jquery';
@@ -149,6 +203,7 @@ export default {
         return {
             from: '',
             to: '',
+            activeStatus: 'unpaid',
             options: [
                 { name: 'Delhi', id: '1' },
                 { name: 'Bhopal', id: '2' },
@@ -156,41 +211,65 @@ export default {
                 { name: 'Ranchi', id: '4' },
                 { name: 'Noida', id: '5' }                         
             ],   
+            fromLabel: 'From',
+            invoiceTemplate: () => {
+                return {
+                    template: Temp
+                };
+            },
+            toLabel: 'To',
             isButtonDisabled: false,
             scheduleDateTime: null,
             showLoader: false,
+            fromDate: this.fromStartDate,
+            toDate: this.toStartDate,
+            toStartDate: this.$moment().format("MMMM D, YYYY"),
+            fromStartDate: this.$moment().format("MMMM D, YYYY"),
+            pluginStartDate: this.$moment().format("D-M-YYYY"),
             tableProps: {
                 pageSettings: { pageSizes: [12, 50, 100, 200], pageCount: 4 },
-                toolbar: [],
+                toolbar: ['Search'],
                 search: { operator: "contains", ignoreCase: true },
             },
             invoiceNumber: 1,
             showCompanies: false,
             companies: [],
             companyId:"select company",
-            invoiceItems: [
+            showDropdown: false,
+            data: [
                 {
-                    item: 'Epump Go',
-                    description: "A device",
-                    quantity: 4,
-                    price: 50,
-                    amount: '200.00',
-                    tax: "tax1"
+                    name: 'Eben Oluwasegun',
+                    price: '50.00'
                 },
                  {
-                    item: 'Adapter',
-                    description: "Some device",
-                    quantity: 4,
-                    price: 100,
-                    amount: '200.00',
-                    tax: "tax2"
+                    name: 'Omoruyi Isaac',
+                    price: '100.00'
                 },
+                {
+                    name: 'Olaitan Akinromade',
+                    price: '500.00'
+                },
+                {
+                    name: 'Favour chi',
+                    price: '1,000.00'
+                },
+                {
+                    name: 'Tunde Ednut',
+                    price: '2,500.00'
+                },
+                {
+                    name: 'Ismail Danfodio',
+                    price: '4,500.00'
+                }
             ],
         }
     },
     mounted() {
-        // document.querySelector('#from__value___value_').textContent = 'From'
-        // document.querySelector('#to__value___value_').textContent = 'To'
+        document.addEventListener('click' , (e) => {
+            if(e.target.contains(document.querySelector('.dropdown__content'))) {
+                this.showDropdown = !this.showDropdown
+            }
+        })
         this.getCompanies()
         Array.from(document.getElementsByTagName('input')).forEach(input => {
             if(!Array.from(input.classList).includes('form-control')) {
@@ -282,8 +361,20 @@ export default {
         input[0].setSelectionRange(caret_pos, caret_pos);
         }
 
+        // this.fromDate = this.pluginStartDate;
 
-
+    },
+    watch: {
+        fromDate: function (newDate) {
+            if (newDate) {
+                this.fromStartDate = this.$moment(newDate, "DD-MM-YYYY").format("MMMM D, YYYY")
+            }
+        },
+        toDate: function (newDate) {
+            if (newDate) {
+                this.toStartDate = this.$moment(newDate, "DD-MM-YYYY").format("MMMM D, YYYY")
+            }
+        },
     },
     computed: {
         totalAmount() {
@@ -296,16 +387,11 @@ export default {
 
     },
     methods: {
-        showDropdown(e) {
-           console.log(e.target.parentNode.parentNode.parentNode)
-            const parent = e.target.parentNode.parentNode.parentNode;
-            if(Array.from(e.target.parentNode.parentNode.parentNode.children[1].classList).includes('show-dropdown'))  {
-                e.target.parentNode.parentNode.parentNode.children[1].classList.remove('show-dropdown')
-                e.target.parentNode.parentNode.parentNode.children[1].classList.add('hide-dropdown')
-            }else {
-                e.target.parentNode.parentNode.parentNode.children[1].classList.add('show-dropdown')
-                e.target.parentNode.parentNode.parentNode.children[1].classList.remove('hide-dropdown')
-            }
+        changeStatus(status) {
+            this.activeStatus = status
+        },
+        toggleDropdown() {
+          this.showDropdown = !this.showDropdown
         },
         getCompanies() {
             this.axios
