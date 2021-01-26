@@ -5,7 +5,7 @@
                 <div class="dialog-container">
                     <div class="row">
                         <div class="col-md-7">
-                            <h5 class="primary-color">New Invoice</h5>
+                            <h4 class="primary-color">New Invoice</h4>
                         </div>
                         <div class="col-md-5 text-right">
                             <button class="rounded-button transparent mr-3">Preview</button>
@@ -201,6 +201,7 @@ export default {
             isButtonDisabled: false,
             scheduleDateTime: null,
             showLoader: false,
+            
             tableProps: {
                 pageSettings: { pageSizes: [12, 50, 100, 200], pageCount: 4 },
                 toolbar: [],

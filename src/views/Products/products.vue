@@ -7,7 +7,7 @@
                 </div>
                 <div class="col-md-4 text-right">
                     <router-link :to="{name:'add_product'}" class="rem-btn  main mobile-btn-height gold_color">
-                        Add Product or service <i class="fa fa-plus-circle ml-2 text-white" aria-hidden="true"></i>
+                        Add Product or service <i class="fa fa-plus-circle ml-2 text-white" style="font-size: 17px" aria-hidden="true"></i>
                     </router-link>
                 </div>
             </div>

@@ -59,8 +59,12 @@ label{
   background: rgba(0, 0, 0, 0.8) !important;
 }
 .dialog-container {
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
+  .dropdown-search {
+    background: transparent !important;
+    border: none;
+  }
 }
 .cursor-pointer {
   cursor: pointer;
@@ -69,4 +73,26 @@ label{
   position: fixed;
   bottom: 20px;
   left: 20px;
+}
+
+.filter-menu {
+  display: flex;
+  border-bottom: 1px solid #b2c2cd;
+  .filter-item {
+    padding-bottom: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover {
+      border-bottom: 3.5px solid lightgray;
+    }
+    &.active {
+      border-bottom: 3.5px solid $primaryColor;
+    }
+    span:first-child {
+      font-size: 13px;
+      &.active {
+        font-weight: 800;
+      }
+    }
+  }
 }

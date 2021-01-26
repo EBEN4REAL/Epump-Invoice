@@ -7,6 +7,7 @@ const Ml = () => import('../views/MasterLayout.vue')
 const Products = () => import('../views/Products/products.vue')
 const AddProduct = () => import('../views/Products/addProducts.vue')
 const Invoice = () => import('../views/Invoice/index.vue')
+const Invoices = () => import('../views/Invoice/invoices.vue')
 
 
 Vue.use(VueRouter);
@@ -16,6 +17,14 @@ let routes = [
     path: "/",
     name: "login",
     component: Login,
+    meta: {
+      guest: true,
+    },
+  },
+  {
+    path: "/invoices",
+    name: "invoices",
+    component: Invoices,
     meta: {
       guest: true,
     },

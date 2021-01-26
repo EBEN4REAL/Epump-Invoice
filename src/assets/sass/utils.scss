@@ -32,3 +32,100 @@ input[type=number]:focus,
 .padding-right-none {
     padding-right: 0px !important;
 }
+.amount-figures {
+    font-size: 23px;
+    font-weight: 600;
+    margin-right: 3px;
+    color: #1c252c;
+}
+.currency{
+    font-size: 20px;
+    font-weight: 600;
+    color: #1c252c;
+}
+.grey-text{
+    color: #849194; 
+}
+.deep-grey {
+    color: #4d6575;
+}
+.invoice-banner {
+    display: flex;
+    justify-content: space-between;
+}
+.invoice-header{
+    font-size: 12px;
+    line-height: 1.4; 
+}
+.counter {
+    background: #dfe6f1;
+    color: #3c5b8b;
+    display: inline-block;
+    padding: 0.35em 0.75em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 1.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.dropdown-select-wrapper {
+    border: 1px solid lightgray;
+    border-radius: 4px; 
+    border-color: $primaryColor;
+    box-shadow: 0px 3px 6px #0000000d;
+    i {
+      color: lightgray;
+    }
+  }
+  
+  ::placeholder {
+    font-size: 14px;
+    font-style: italic;
+    color: $primaryColor;
+  }
+  .dropdown-parent  {
+    background: $white;
+  }
+  
+  .dropdown__content {
+    position: absolute;
+    left: 15px;
+    width: 94%;
+    box-shadow: 0px 3px 6px #0000000d;
+    background: white;
+   
+    top: 40px;
+    ul {
+        list-style-type: none;
+        display: block;
+        margin: 0px !important;
+        padding: none !important;
+        .dropdown-list {
+            background: #f0f4fa;
+            padding: 12px 19px;
+            border-bottom: 1px solid #1f444214;
+            cursor: pointer;
+        }
+    }
+  }
+  .dropdown-select-container {
+    height: 38px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border: 1px solid lightgray;
+   
+  }
+ 
+  .height-100 {
+      height: 100%;
+  }
+  .show-dropdown {
+      display: block;
+  }
+  .hide-dropdown {
+    display: none;
+}
