@@ -170,11 +170,8 @@
                                     </div>
                                 </div>
                                 <div class="text-center mt-3 cursor-pointer position-relative">
-                                    <span @click="toggleDropdown" v-show="!showDropdown">
-                                        <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
-                                        <span class="primary-color bold-span"  >Add an item</span>
-                                    </span>
-                                    
+                                    <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
+                                    <span class="primary-color bold-span"  @click="toggleDropdown" v-if="!showDropdown">Add an item</span>
                                     <div class="dropdown__content" style="top: -13px" v-show="showDropdown">
                                        <div class="dropdown-select-wrapper m-3">
                                             <div class="row align-items-center">
