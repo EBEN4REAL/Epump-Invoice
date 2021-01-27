@@ -134,3 +134,18 @@ input[type=number]:focus,
 .form-control {
     height: calc(1.79em + 0.75rem + 2px) !important;
 }
+.show_dropdown {
+    display: block !important;
+}
+.hide_dropdown {
+    display: none !important;
+}
+.dropdown-menu-list {
+    height: 100px;
+    overflow: auto;
+}
+.create-item-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

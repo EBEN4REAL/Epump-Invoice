@@ -101,18 +101,25 @@ export default {
                         const roles = res.data.role.split(",");
                         res.data.roles = roles
                         
-                        localStorage.setItem("epumpInvoiceManager", JSON.stringify(res.data));
+                       if(roles.includes("Super Admin") || roles.includes("Admin")) {
+                            localStorage.setItem("epumpInvoiceManager", JSON.stringify(res.data));
 
-                        const decoded = jwt_decode(res.data.token);
-                        const exp = decoded.exp * 1000;
-                        localStorage.setItem('jwtExpiry', exp)
+                            const decoded = jwt_decode(res.data.token);
+                            const exp = decoded.exp * 1000;
+                            localStorage.setItem('jwtExpiry', exp)
 
-                        this.$router.push({ name: "invoices" });
+                            this.$router.push({ name: "invoices" });
 
-                        this.$toast("Login Successful", {
-                            type: "success",
-                            timeout: 3000
-                        });
+                            this.$toast("Login Successful", {
+                                type: "success",
+                                timeout: 3000
+                            });
+                        } else {
+                            this.$toast("You do not have any of the required roles to access this portal", {
+                                type: "error",
+                                timeout: 3000
+                            });
+                        }
                 })
                 .catch(error => {
                     this.isButtonDisabled = false;

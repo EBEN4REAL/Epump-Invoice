@@ -26,40 +26,36 @@ let routes = [
     name: "invoices",
     component: Invoices,
     meta: {
-      guest: true,
-    },
+        authorize: true,
+        authRoles: ['Admin']
+    }
   },
   {
     path: "/invoice",
     name: "invoice",
     component: Invoice,
     meta: {
-      guest: true,
-    },
+        authorize: true,
+        authRoles: ['Admin']
+    }
   },
   {
     path: "/add-product",
     name: "add_product",
     component: AddProduct,
     meta: {
-      guest: true,
-    },
+        authorize: true,
+        authRoles: ['Admin']
+    }
   },
   {
     path: "/products",
     name: "products",
     component: Products,
     meta: {
-      guest: true,
-    },
-  },
-  {
-    path: "/ml",
-    name: "ml",
-    component: Ml,
-    meta: {
-      guest: true,
-    },
+        authorize: true,
+        authRoles: ['Admin']
+    }
   },
 ];
 
@@ -69,33 +65,42 @@ const router = new VueRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some((rec) => rec.meta.authorize)) {
-//     if (localStorage.getItem("remisCardUserDetails") === null) {
-//       next({ name: "login", params: { nextUrl: to.fullPath } });
-//     } else {
-//       let user = JSON.parse(localStorage.getItem("remisCardUserDetails"));
 
-//       if (to.matched.some((rec) => rec.meta.authRoles.includes("Remis"))) {
-//         if (user.role.includes("Remis")) {
-//           next();
-//         }
-//       } else {
-//         next();
-//       }
-//     }
-//   } else if (to.matched.some((rec) => rec.meta.guest)) {
-//     if (localStorage.getItem("remisCardUserDetails") === null) {
-//       next();
-//     } else {
-//       let user = JSON.parse(localStorage.getItem("remisCardUserDetails"));
-//       if (user.role.includes("Remis")) {
-//         next({ name: "activate_card" });
-//       }
-//     }
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((rec) => rec.meta.authorize)) {
+    // Authorized Pages will he handled here
+    if (localStorage.getItem("epumpInvoiceManager") === null) {
+      // There is no logged in user, go back to Login (and redirect to intended page after successfull login)
+      next({ name: "login", params: { nextUrl: to.fullPath } });
+    } else {
+      let user = JSON.parse(localStorage.getItem("epumpInvoiceManager"));
+
+      // Company Admin
+      if (to.matched.some((rec) => rec.meta.authRoles.includes("Admin"))) {
+        if (
+          user.roles.includes("Super Admin") ||
+          user.roles.includes("Admin")
+        ) {
+          next();
+        }
+      } else {
+        next();
+      }
+    }
+  } else if (to.matched.some((rec) => rec.meta.guest)) {
+    //Guest Pages are Handled here e.g. Login
+    if (localStorage.getItem("epumpInvoiceManager") === null) {
+      next();
+    } else {
+      let user = JSON.parse(localStorage.getItem("epumpInvoiceManager"));
+      if (user.roles.includes("Super Admin") || user.roles.includes("Admin")) {
+        next({ name: "invoices" });
+      }
+    }
+  } else {
+    // Free pages are handled here
+    next();
+  }
+});
 
 export default router;

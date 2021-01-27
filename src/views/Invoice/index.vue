@@ -12,7 +12,7 @@
                             <button class="rounded-button colored text-white">Save and contiue</button>
                         </div>
                         <div class="w-100 pl-3 pr-3">
-                            <form class="mt-3">
+                            <!-- <form class="mt-3">
                                 <div class="mt-3">
                                     <div class="form_input">
                                         <select class="form-control">
@@ -21,54 +21,46 @@
                                         </select>
                                     </div>
                                 </div>
-                            </form>
+                            </form> -->
                         </div>
                         <div class="invoice-container mt-3">
                             <div class="add_customer_conainer">
-                                <div class="add_customer">
-                                    <div class="row align-items-center" v-if="showCompanies">
+                                <div class="invoice_customer p-3" v-if="view ==='customer'">
+                                    <div class="bold-span grey-text">Bill to</div>
+                                    <div class="bold-span mt-1">{{selectedCompany.name}}</div>
+                                    <div class="bold-span mt-1">{{selectedCompany.email}}</div>
+                                    <div class="bold-span primary-color mt-1 cursor-pointer" @click="changeView('showCompanies')">choose a different customer</div>
+                                </div>
+                                <div class="add_customer" v-show="view === 'showCompanies' || view === 'selectCompany'">
+                                    <div class="row align-items-center  ml-3" v-if="view === 'showCompanies'">
                                         <div class="col-md-9">
-                                             <div class="w-100 p-3" >
-                                                <select v-model="companyId" class="form-control" >
-                                                    <option disabled selected value="select company">select company</option>
-                                                    <option :value="cp.id" v-for="(cp,i) in companies" :key='i'>{{cp.name}}</option>
-                                                </select>
+                                            <div class="dropdown__content" style="width: 91.1%;left: 2px;top: 27pxx;top: 17px;border-radius: 15px;height: 175px;">
+                                                <div class="dropdown-select-wrapper m-2">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-1 text-right padding-right-none">
+                                                            <i class="fa fa-search ml-2"  aria-hidden="true"></i>
+                                                        </div>
+                                                        <div class="col-md-11">
+                                                            <input type="search" autofocus  class="form-control dropdown-search" placeholder="Type a customer name"  v-model="companySearch"   />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <ul class="dropdown-menu-list">
+                                                    <li class="dropdown-list cursor-po" v-for="(cp,i) in filteredCompanies" :key='i' @click="selectCompany(cp)">{{cp.name}}</li>
+                                                </ul>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <i class="fa fa-times primary-color cursor-pointer" style="font-size: 20px" title="cancel" aria-hidden="true" @click="toggleCompaniesDropdown"></i>
-
-                                        </div>
+                                      <!--  <div class="col-md-3">
+                                            <i class="fa fa-times primary-color cursor-pointer" style="font-size: 20px" title="cancel" aria-hidden="true" @click="changeView('selectCompany')"></i>
+                                        </div> -->
                                     </div>
-                                    <button class="rounded-button transparent ml-3 mt-2" v-if="showCompanies">Generate Invoice</button>
-                                    <div class="add_custoemr_card mt-3 ml-3" @click="toggleCompaniesDropdown" v-if="!showCompanies">
+                                    <div class="add_custoemr_card mt-3 ml-3" @click="changeView('showCompanies')" v-if="selectCompany">
                                         <span>
                                             <i class="fa fa-building-o mr-2 primary-color" aria-hidden="true"></i> <span class="primary-color" >Select company</span>
                                         </span>
                                     </div>
                                 </div>
                                 <div class="invoice_details pr-3">
-                                    
-                                    <!-- <div class="row align-items-center mt-3">
-                                        <div class="col-md-5 text-right">
-                                            <label class="primary-color">Invoice number</label>
-                                        </div>
-                                        <div class="col-md-7">
-                                            <div class="">
-                                                <input type="text"  class="form-control" v-model="invoiceNumber"  />
-                                            </div>
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="row align-items-center mt-2">
-                                        <div class="col-md-5 text-right">
-                                            <label class="primary-color">PO/SO number</label>
-                                        </div>
-                                        <div class="col-md-7">
-                                            <div class="">
-                                                <input type="text"  class="form-control"  />
-                                            </div>
-                                        </div>
-                                    </div> -->
                                     <div class="row align-items-center mt-2">
                                         <div class="col-md-5 text-right">
                                             <label class="primary-color">Invoice date</label>
@@ -121,7 +113,7 @@
                                     <div class="invoice_items pr-2">
                                         <div class="row">
                                             <div class="col-md-4 padding-right-none">
-                                                <input type="text"  class="form-control"  v-model="invoice.item" placeholder="Enter item name" />
+                                                <input type="text"  class="form-control"  v-model="invoice.item" placeholder="Item name" />
                                             </div>
                                             <div class="col-md-8">
                                                 <textarea  class="form-control" v-model="invoice.description" placeholder="Enter item description"  /></textarea>
@@ -129,7 +121,7 @@
                                         </div>
                                     </div>
                                     <div class="quantity pr-2">
-                                        <input type="text"  class="form-control" v-model="invoice.quantity"   />
+                                        <input type="number"  class="form-control" v-model="invoice.quantity"   />
                                     </div> 
                                     <div class="price pr-2">
                                         <input type="text" class="form-control" name="currency-field" id="currency" pattern="^\₦\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="" placeholder="price" v-model="invoice.price">
@@ -170,9 +162,12 @@
                                     </div>
                                 </div>
                                 <div class="text-center mt-3 cursor-pointer position-relative">
-                                    <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
-                                    <span class="primary-color bold-span"  @click="toggleDropdown" v-if="!showDropdown">Add an item</span>
-                                    <div class="dropdown__content" style="top: -13px" v-show="showDropdown">
+                                    <div @click="toggleDropdown" v-if="!showDropdown">
+                                        <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
+                                         <span class="primary-color bold-span"  >Add an item</span>
+                                    </div>
+                                   
+                                    <div class="dropdown__content" style="top: -13px;" :class="[showDropdown ? 'show_dropdown' : 'hide_dropdown']">
                                        <div class="dropdown-select-wrapper m-3">
                                             <div class="row align-items-center">
                                                 <div class="col-md-1 text-right padding-right-none">
@@ -183,8 +178,8 @@
                                                 </div>
                                             </div>
                                        </div>
-                                      <ul class="dropdown-menu-list">
-                                            <li class="dropdown-list cursor-po" v-for="(prod,i) in products" :key="i" @click="selectItem(prod)">
+                                      <ul class="">
+                                            <li class="dropdown-list " v-for="(prod,i) in products" :key="i" @click="selectItem(prod)">
                                                 <div class="product-list">
                                                     <div>
                                                         <span class="primary-color">{{prod.item}}</span>
@@ -195,9 +190,15 @@
                                                 </div>
                                             </li>
                                        </ul>
-                                       <div class="text-center p-3">
-                                            <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
-                                            <span class="primary-color bold-span"  @click="addItem">Create a item</span>
+                                       <div class="p-3 create-item-container">
+                                            <div class="">
+                                                <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
+                                                <span class="primary-color bold-span"  @click="addItem">Create a new item</span>
+                                            </div>
+                                            <div>
+                                                <span class="bold-span primary-color" @click="toggleDropdown">Cancel</span>
+                                            </div>
+                                            
                                        </div>
                                    </div>
                                 </div>
@@ -244,7 +245,9 @@ export default {
     data() {
         return {
             showDropdown: false,
+            companySearch: "",
             rate: 1,
+            view: 'selectCompany',
             isButtonDisabled: false,
             scheduleDateTime: null,
             showLoader: false,
@@ -255,8 +258,9 @@ export default {
                 search: { operator: "contains", ignoreCase: true },
             },
             invoiceNumber: 1,
-            showCompanies: false,
             companies: [],
+            selectedCompany: {},
+            showCompanies: false,
             companyId:"select company",
             products: [
                 {
@@ -282,27 +286,8 @@ export default {
                 input.classList.add('form-control')
             }
         })
-        document.querySelector('.dropdown__content').addEventListener('focusout', function(e){
-            this.showDropdown = !this.showDropdown
-        });
-        $(window).click(function () { //Hide the menus if visible
-             $('.dropdown__content').click(function (event) {event.stopPropagation();});
-         }); 
-        document.addEventListener("click", (evt) => {
-            let flyoutEl = document.querySelector('dropdown__content'),
-            targetEl = evt.target; // clicked element      
-            do {
-            if(targetEl == flyoutEl) {
-                // This is a click inside, does nothing, just return.
-                // document.getElementById("flyout-debug").textContent = "Clicked inside!";
-                return;
-            }
-            // Go up the DOM
-            targetEl = targetEl.parentNode;
-            } while (targetEl);
-            // This is a click outside.
-           this.showDropdown = !this.showDropdown
-        });
+     
+     
         // Jquery Dependency
 
         $("input[data-type='currency']").on({
@@ -389,9 +374,11 @@ export default {
         }
 
 
-
     },
     computed: {
+        filteredCompanies() {
+            return this.companies.filter(company => company.name.toLowerCase().includes(this.companySearch.toLowerCase()))
+        },
         totalAmount() {
             return this.invoiceItems.reduce((acc,cur) => {
                 return acc += ((cur.quantity * cur.price)) + cur.taxPrice
@@ -414,7 +401,15 @@ export default {
         }
     },
     methods: {
+        changeView(view) {
+            this.view = view
+        },
+        selectCompany(company) {
+            this.selectedCompany = company
+            this.view = 'customer'
+        },
         selectItem(product) {
+            product.quantity = this.rate
             this.invoiceItems.push(product)
             this.showDropdown = !this.showDropdown
         },
@@ -426,6 +421,7 @@ export default {
             .get(
                 `${configObject.apiBaseUrl}/Company`, configObject.authConfig())
                 .then(res => {
+                    console.log(res.data.data)
                     this.companies = res.data.data
             })
             .catch(error => {
@@ -448,7 +444,8 @@ export default {
                 quantity: 1,
                 price: 0,
                 amount: '',
-                tax: ''
+                tax: '',
+                taxPrice: 500
             })
             this.showDropdown = !this.showDropdown
         },
