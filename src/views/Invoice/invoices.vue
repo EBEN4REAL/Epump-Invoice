@@ -136,14 +136,15 @@
                         <div class="filter-menu">
                             <div class="filter-item mr-3 text-center" @click="changeStatus('unpaid')" :class="[activeStatus === 'unpaid' ? 'active' : null]">
                                 <span class="mr-2" :class="[activeStatus === 'unpaid' ? 'active' : null]">Unpaid</span>
-                                <span class="counter mr-2">0</span>
+                                <span class="counter mr-2">{{unpaidCount}}</span>
                             </div>
                             <div class="filter-item mr-3  text-center" @click="changeStatus('draft')" :class="[activeStatus === 'draft' ? 'active' : null]">
                                 <span class="mr-2 " :class="[activeStatus === 'draft' ? 'active' : null]">Draft</span>
-                                <span class="counter mr-2">0</span>
+                                <span class="counter mr-2">{{draftCount}}</span>
                             </div>
                             <div class="filter-item text-center" @click="changeStatus('all')" :class="[activeStatus === 'all' ? 'active' : null]">
                                 <span class="mr-2" :class="[activeStatus === 'all' ? 'active' : null]">All invoices</span>
+                                <span class="counter mr-2">{{copiedData.length}}</span>
                             </div>
                         </div>
                     </div>
@@ -166,9 +167,9 @@
                         >
                         <e-columns>
                             <e-column width="100" :template="invoiceTemplate" headerText="Status"></e-column>
-                            <e-column width="200" field="price" headerText="Date" ></e-column>
-                            <e-column width="200" field="price" headerText="Number" ></e-column>
-                            <e-column width="200" field="price" headerText="Amount Due" ></e-column>
+                            <e-column width="200" field="due" headerText="Due Date" ></e-column>
+                            <e-column width="200" field="customer" headerText="Customer" ></e-column>
+                            <e-column width="200" field="amountDue" headerText="Amount Due" ></e-column>
                             
                         </e-columns>
                     </ejs-grid>
@@ -203,7 +204,10 @@ export default {
         return {
             from: '',
             to: '',
-            activeStatus: 'unpaid',
+            activeStatus: 'all',
+            unpaidCount: 0,
+            draftCount: 0,
+            allCount:0,
             options: [
                 { name: 'Delhi', id: '1' },
                 { name: 'Bhopal', id: '2' },
@@ -238,29 +242,67 @@ export default {
             showDropdown: false,
             data: [
                 {
-                    name: 'Eben Oluwasegun',
-                    price: '50.00'
+                    customer: 'Eben Oluwasegun',
+                    due: '21-01-25',
+                    status: 'overdue',
+                    amountDue: '₦ 3,284.00'
                 },
                  {
-                    name: 'Omoruyi Isaac',
-                    price: '100.00'
+                    customer: 'Omoruyi Isaac',
+                    due: '21-01-25',
+                    status: 'draft',
+                    amountDue: '₦ 3,284.00'
                 },
                 {
-                    name: 'Olaitan Akinromade',
-                    price: '500.00'
+                    customer: 'Olaitan Akinromade',
+                    due: '21-01-25',
+                    status: 'overdue',
+                    amountDue: '₦ 3,284.00'
                 },
                 {
-                    name: 'Favour chi',
-                    price: '1,000.00'
+                    customer: 'Favour chi',
+                    due: '21-01-25',
+                    status: 'draft',
+                    amountDue: '₦ 3,284.00'
                 },
                 {
-                    name: 'Tunde Ednut',
-                    price: '2,500.00'
+                    customer: 'Tunde Ednut',
+                    due: '21-01-25',
+                    status: 'overdue',
+                    amountDue: '₦ 3,284.00'
+                },
+            ],
+            copiedData: [
+                {
+                    customer: 'Eben Oluwasegun',
+                    due: '21-01-25',
+                    status: 'overdue',
+                    amountDue: '₦ 3,284.00'
+                },
+                 {
+                    customer: 'Omoruyi Isaac',
+                    due: '21-01-25',
+                    status: 'draft',
+                    amountDue: '₦ 3,284.00'
                 },
                 {
-                    name: 'Ismail Danfodio',
-                    price: '4,500.00'
-                }
+                    customer: 'Olaitan Akinromade',
+                    due: '21-01-25',
+                    status: 'overdue',
+                    amountDue: '₦ 3,284.00'
+                },
+                {
+                    customer: 'Favour chi',
+                    due: '21-01-25',
+                    status: 'draft',
+                    amountDue: '₦ 3,284.00'
+                },
+                {
+                    customer: 'Tunde Ednut',
+                    due: '21-01-25',
+                    status: 'overdue',
+                    amountDue: '₦ 3,284.00'
+                },
             ],
         }
     },
@@ -276,93 +318,7 @@ export default {
                 input.classList.add('form-control')
             }
         })
-        // Jquery Dependency
-
-        $("input[data-type='currency']").on({
-            keyup: function() {
-            formatCurrency($(this));
-            },
-            blur: function() { 
-            formatCurrency($(this), "blur");
-            }
-        });
-
-
-        function formatNumber(n) {
-        // format number 1000000 to 1,234,567
-        return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        }
-
-
-        function formatCurrency(input, blur) {
-        // appends $ to value, validates decimal side
-        // and puts cursor back in right position.
-        
-        // get input value
-        var input_val = input.val();
-        
-        // don't validate empty input
-        if (input_val === "") { return; }
-        
-        // original length
-        var original_len = input_val.length;
-
-        // initial caret position 
-        var caret_pos = input.prop("selectionStart");
-            
-        // check for decimal
-        if (input_val.indexOf(".") >= 0) {
-
-            // get position of first decimal
-            // this prevents multiple decimals from
-            // being entered
-            var decimal_pos = input_val.indexOf(".");
-
-            // split number by decimal point
-            var left_side = input_val.substring(0, decimal_pos);
-            var right_side = input_val.substring(decimal_pos);
-
-            // add commas to left side of number
-            left_side = formatNumber(left_side);
-
-            // validate right side
-            right_side = formatNumber(right_side);
-            
-            // On blur make sure 2 numbers after decimal
-            if (blur === "blur") {
-            right_side += "00";
-            }
-            
-            // Limit decimal to only 2 digits
-            right_side = right_side.substring(0, 2);
-
-            // join number by .
-            input_val = "₦" + left_side + "." + right_side;
-
-        } else {
-            // no decimal entered
-            // add commas to number
-            // remove all non-digits
-            input_val = formatNumber(input_val);
-            input_val = "₦" + input_val;
-            
-            // final formatting
-            if (blur === "blur") {
-            input_val += ".00";
-            }
-        }
-        
-        // send updated string to input
-        input.val(input_val);
-
-        // put caret back in the right position
-        var updated_len = input_val.length;
-        caret_pos = updated_len - original_len + caret_pos;
-        input[0].setSelectionRange(caret_pos, caret_pos);
-        }
-
-        // this.fromDate = this.pluginStartDate;
-
+       
     },
     watch: {
         fromDate: function (newDate) {
@@ -389,6 +345,20 @@ export default {
     methods: {
         changeStatus(status) {
             this.activeStatus = status
+            if(status === 'draft') {
+                const data = this.copiedData.filter(el => el.status === 'draft')
+                this.draftCount = data.length
+                this.data = data
+            }
+             if(status === 'unpaid') {
+                const data = this.copiedData.filter(el => el.status === 'overdue')
+                this.unpaidCount = data.length
+                this.data = data
+            }
+            if(status === 'all') {
+                this.allCount = this.copiedData.lenth
+                this.data = this.copiedData
+            }
         },
         toggleDropdown() {
           this.showDropdown = !this.showDropdown

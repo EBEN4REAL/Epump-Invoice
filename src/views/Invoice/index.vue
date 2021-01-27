@@ -2,14 +2,14 @@
     <div>
         <MasterLayout>
             <div class="py-4">
-                <div class="dialog-container">
+                <div class="dialog-container" style="width: 80%">
                     <div class="row">
                         <div class="col-md-7">
                             <h4 class="primary-color">New Invoice</h4>
                         </div>
                         <div class="col-md-5 text-right">
                             <button class="rounded-button transparent mr-3">Preview</button>
-                            <button class="rounded-button colored">Save and contiue</button>
+                            <button class="rounded-button colored text-white">Save and contiue</button>
                         </div>
                         <div class="w-100 pl-3 pr-3">
                             <form class="mt-3">
@@ -48,7 +48,8 @@
                                     </div>
                                 </div>
                                 <div class="invoice_details pr-3">
-                                    <div class="row align-items-center mt-3">
+                                    
+                                    <!-- <div class="row align-items-center mt-3">
                                         <div class="col-md-5 text-right">
                                             <label class="primary-color">Invoice number</label>
                                         </div>
@@ -57,8 +58,8 @@
                                                 <input type="text"  class="form-control" v-model="invoiceNumber"  />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row align-items-center mt-2">
+                                    </div> -->
+                                    <!-- <div class="row align-items-center mt-2">
                                         <div class="col-md-5 text-right">
                                             <label class="primary-color">PO/SO number</label>
                                         </div>
@@ -67,7 +68,7 @@
                                                 <input type="text"  class="form-control"  />
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="row align-items-center mt-2">
                                         <div class="col-md-5 text-right">
                                             <label class="primary-color">Invoice date</label>
@@ -88,6 +89,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row align-items-center mt-2">
+                                        <div class="col-md-5 text-right">
+                                            <label class="primary-color">Rate</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="">
+                                                <input type="text"  class="form-control" v-model="rate"  />
+                                            </div>
+                                        </div>
+                                    </div> 
                                 </div>
                             </div>
                             <div class="table-header mt-5">
@@ -109,11 +120,11 @@
                                 <div class="table-header" >
                                     <div class="invoice_items pr-2">
                                         <div class="row">
-                                            <div class="col-md-6 padding-right-none">
+                                            <div class="col-md-4 padding-right-none">
                                                 <input type="text"  class="form-control"  v-model="invoice.item" placeholder="Enter item name" />
                                             </div>
-                                            <div class="col-md-6">
-                                                <input type="text"  class="form-control" v-model="invoice.description" placeholder="Enter item description"  />
+                                            <div class="col-md-8">
+                                                <textarea  class="form-control" v-model="invoice.description" placeholder="Enter item description"  /></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -150,15 +161,52 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2 text-right">
-                                                <i class="fa fa-minus primary-color" aria-hidden="true"></i>
+                                            <div class="col-md-2 text-right primary-color">
+                                                <i class="fa fa-minu primary-color" aria-hidden="true"></i>
+                                                <span class="primary-color bold-span">₦ {{invoice.taxPrice}}.00</span>
+                                               
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="text-center mt-3 cursor-pointer" @click="addItem">
-                                    <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
-                                    <span class="primary-color bold-span">Add an item</span>
+                                <div class="text-center mt-3 cursor-pointer position-relative">
+                                    <span @click="toggleDropdown" v-show="!showDropdown">
+                                        <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
+                                        <span class="primary-color bold-span"  >Add an item</span>
+                                    </span>
+                                    
+                                    <div class="dropdown__content" style="top: -13px" v-show="showDropdown">
+                                       <div class="dropdown-select-wrapper m-3">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-1 text-right padding-right-none">
+                                                    <i class="fa fa-search ml-2"  aria-hidden="true"></i>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <input type="text" autofocus  class="form-control dropdown-search" placeholder="Type a customer name"    />
+                                                </div>
+                                            </div>
+                                       </div>
+                                      <ul class="dropdown-menu-list">
+                                            <li class="dropdown-list cursor-po" v-for="(prod,i) in products" :key="i" @click="selectItem(prod)">
+                                                <div class="product-list">
+                                                    <div>
+                                                        <span class="primary-color">{{prod.item}}</span>
+                                                    </div>
+                                                    <div>
+                                                        ₦ {{prod.priceFormatted}}
+                                                    </div>
+                                                </div>
+                                            </li>
+                                       </ul>
+                                       <div class="text-center p-3">
+                                            <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
+                                            <span class="primary-color bold-span"  @click="addItem">Create a item</span>
+                                       </div>
+                                   </div>
+                                </div>
+                                <div class="text-right mt-3 cursor-pointer pr-3">
+                                    <span class="primary-color mr-3 bold-span">Sub Total: </span>
+                                    <span class="primary-color bold-span">&#8358;  {{subTotal}}.00</span>
                                 </div>
                                 <div class="text-right mt-3 cursor-pointer pr-3">
                                     <span class="primary-color mr-3 bold-span">Total: </span>
@@ -198,6 +246,8 @@ export default {
     },
     data() {
         return {
+            showDropdown: false,
+            rate: 1,
             isButtonDisabled: false,
             scheduleDateTime: null,
             showLoader: false,
@@ -211,24 +261,21 @@ export default {
             showCompanies: false,
             companies: [],
             companyId:"select company",
-            invoiceItems: [
+            products: [
                 {
-                    item: 'Epump Go',
-                    description: "A device",
-                    quantity: 4,
-                    price: 50,
-                    amount: '200.00',
-                    tax: "tax1"
-                },
-                 {
-                    item: 'Adapter',
-                    description: "Some device",
-                    quantity: 4,
-                    price: 100,
-                    amount: '200.00',
-                    tax: "tax2"
-                },
+                    item: "Epump Go",
+                    priceFormatted: '100,000.00',
+                    priceAmount: 100000,
+                    description: "A device which connects pumps & tanks in your station  to our web platform",
+                    quantity: 1,
+                    price: 100000,
+                    amount: 0,
+                    tax: "tax1",
+                    taxAmount: '20,000.00',
+                    taxPrice: 500
+                }
             ],
+            invoiceItems: [ ],
         }
     },
     mounted() {
@@ -238,6 +285,27 @@ export default {
                 input.classList.add('form-control')
             }
         })
+        document.querySelector('.dropdown__content').addEventListener('focusout', function(e){
+            this.showDropdown = !this.showDropdown
+        });
+        $(window).click(function () { //Hide the menus if visible
+             $('.dropdown__content').click(function (event) {event.stopPropagation();});
+         }); 
+        document.addEventListener("click", (evt) => {
+            let flyoutEl = document.querySelector('dropdown__content'),
+            targetEl = evt.target; // clicked element      
+            do {
+            if(targetEl == flyoutEl) {
+                // This is a click inside, does nothing, just return.
+                // document.getElementById("flyout-debug").textContent = "Clicked inside!";
+                return;
+            }
+            // Go up the DOM
+            targetEl = targetEl.parentNode;
+            } while (targetEl);
+            // This is a click outside.
+           this.showDropdown = !this.showDropdown
+        });
         // Jquery Dependency
 
         $("input[data-type='currency']").on({
@@ -329,14 +397,33 @@ export default {
     computed: {
         totalAmount() {
             return this.invoiceItems.reduce((acc,cur) => {
-                return acc += ((cur.quantity * cur.price))
+                return acc += ((cur.quantity * cur.price)) + cur.taxPrice
+            }, 0)
+        },
+        subTotal() {
+            return this.invoiceItems.reduce((acc,cur) => {
+                return acc += ((cur.quantity * cur.price)) 
             }, 0)
         }
     },
     created() {
 
     },
+    watch: {
+        rate(val) {
+            this.invoiceItems.forEach(el => {
+                el.quantity = val
+            })
+        }
+    },
     methods: {
+        selectItem(product) {
+            this.invoiceItems.push(product)
+            this.showDropdown = !this.showDropdown
+        },
+        toggleDropdown() {
+            this.showDropdown = !this.showDropdown
+        },
         getCompanies() {
             this.axios
             .get(
@@ -366,6 +453,7 @@ export default {
                 amount: '',
                 tax: ''
             })
+            this.showDropdown = !this.showDropdown
         },
         refreshGrid() {
             this.$refs.dataGrid.refresh();

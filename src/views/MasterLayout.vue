@@ -10,7 +10,7 @@
                 </div>
                 <ul class="">
                     <li>
-                        <router-link :to="{path:'/invoice'}" class="s-sidebar__nav-link" :class="[route === 'invoice' || route === 'invoices'  ? 'active' : null]">
+                        <router-link :to="{path:'/invoices'}" class="s-sidebar__nav-link" :class="[route === 'invoice' || route === 'invoices'  ? 'active' : null]">
                             Invoices
                         </router-link>
                     </li>

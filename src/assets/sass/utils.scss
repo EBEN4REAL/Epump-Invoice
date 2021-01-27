@@ -75,7 +75,7 @@ input[type=number]:focus,
 .dropdown-select-wrapper {
     border: 1px solid lightgray;
     border-radius: 4px; 
-    border-color: $primaryColor;
+    // border-color: $primaryColor;
     box-shadow: 0px 3px 6px #0000000d;
     i {
       color: lightgray;
@@ -94,27 +94,28 @@ input[type=number]:focus,
   .dropdown__content {
     z-index: 1;
     position: absolute;
-    left: 15px;
-    width: 95.5%;
+    left: 16px;
+    width: 95.1%;
     box-shadow: 0px 3px 6px #0000000d;
     background: white;
-   
-    top: 40px;
+    top: 41px;
     ul {
         list-style-type: none;
         display: block;
         margin: 0px !important;
         padding: none !important;
         .dropdown-list {
-            background: #f0f4fa;
             padding: 12px 19px;
             border-bottom: 1px solid #1f444214;
             cursor: pointer;
+            &:hover {
+                background: #f0f4fa;
+            }
         }
     }
   }
   .dropdown-select-container {
-    height: 38px;
+    height: 41px;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     border: 1px solid lightgray;
