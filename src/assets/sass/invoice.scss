@@ -59,14 +59,49 @@
         justify-content: flex-end;
     }
 }
+.table-list-input {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 15px;
+    border-bottom: 1px solid #370f7012;
+    button {
+        position: absolute;
+        top: -26px;
+        left: 50px;
+    }
+    .add {
+        font-weight: 600;
+    }
+    span {
+        font-weight: 600;
+    }
+    .invoice_items {
+        flex: 0 0 50%;
+    }
+    .quantity {
+        flex:  0 0 15%;
+    }
+    .price {
+        flex:  0 0 15%;
+    }
+    .amount {
+        flex:  0 0 20%;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
 .invoice__details{
     .tax-row {
-        background:#d5dfe8 ;
+        // background:#d5dfe8 ;
+        border-bottom: 1px solid #370f7012;
     }
     padding-left: 15px 15px;
 }
 .invoice-banner {
-    border: 1px solid lightgray;
+    border: 1px solid #370f7012;
     height: 120px;
     padding: 15px;
     border-radius: 10px;

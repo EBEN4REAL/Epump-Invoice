@@ -541,11 +541,8 @@ export default {
             this.showCompanies = !this.showCompanies
         },
         removeTax(invoiceIndex, taxIndex) {
-            alert()
             let invoices = [...this.invoiceItems]
-            console.log(invoices)
             const invoice  = invoices.find((invoice,i) => invoiceIndex === i)
-            console.log(invoice)
             if(invoice.taxes.length > 1) {
                 invoice.taxes.splice(taxIndex, 1)
             }

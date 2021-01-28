@@ -149,3 +149,15 @@ input[type=number]:focus,
     justify-content: space-between;
     align-items: center;
 }
+.custom-control-label::before {
+    height: 0.8rem !important;
+    width: 0.8rem !important;
+}
+.custom-control-label::after {
+    position: absolute;
+    top: 0.15rem !important;
+    left: -1.6rem !important;
+}
+.custom-control-input:checked ~ .custom-control-label::before{
+        background: $primaryColor !important;
+}

@@ -360,6 +360,7 @@ export default {
                 this.data = this.copiedData
             }
         },
+        
         toggleDropdown() {
           this.showDropdown = !this.showDropdown
         },

@@ -8,7 +8,7 @@
         <div class="mt-3">
             <label>Tax Name</label>
             <div class="form_input">
-                <input type="text"  class="form-control"  />
+                <input type="text"  class="form-control"   />
             </div>
         </div>
         <div class="mt-3">
@@ -35,12 +35,12 @@
                 <input type="text"  class="form-control"  />
             </div>
         </div>
-        <div class="mt-3">
+        <!-- <div class="mt-3">
             <label class="mr-3">Show tax number on invoices</label> <input type="checkbox"   style="height: 12px"  />
         </div>
         <div class="mt-3">
             <label class="mr-3">Is this tax recoverable?</label> <input type="checkbox"   style="height: 12px"  />
-        </div>
+        </div> -->
         <button class="rem-btn w-100 main mobile-btn-height gold_color mt-4 " 
             @click="login($event, 'verifyEmail')"
             :disabled="isButtonDisabled ? true : null"

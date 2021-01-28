@@ -24,11 +24,16 @@
                                 <input type="number"  class="form-control"  />
                             </div>
                         </div>
-                        <div class="mt-3">
+                        <div class="mt-3 position-relative">
                             <label>Sales Tax</label>
-                            <div class="form_input">
-                                <input type="text"  class="form-control" @click="addTaxModal" />
-                            </div>
+                             <b-form-checkbox-group
+                                v-model="selected"
+                                :options="options"
+                                class="mb-3"
+                                value-field="item"
+                                text-field="name"
+                                disabled-field="notEnabled"
+                                ></b-form-checkbox-group>
                         </div>
                         <button class="rem-btn w-100 main mobile-btn-height gold_color mt-5" 
                             @click="login($event, 'verifyEmail')"
@@ -71,6 +76,15 @@ export default {
     data() {
         return {
             isButtonDisabled: false,
+            selected: [],
+            options: [
+                { 
+                    item: 'vat', name: 'VAT (7.5%)' 
+                },
+                { 
+                    item: 'WHT', name: 'WHT (10%)' 
+                },
+            ]
         }
     },
     methods: {
