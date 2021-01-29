@@ -304,7 +304,7 @@
                                         </div>
                                         <div class="col-md-7">
                                             <div class="">
-                                                FM894634
+                                                {{invoiceNumber}}
                                             </div>
                                         </div>
                                     </div> 
@@ -428,7 +428,7 @@ export default {
                 name: 'Tax 1',
                 value: 'tax1'
             },
-            pageStatus: 'preview',
+            pageStatus: 'edit',
             companySearch: "",
             rate: 1,
             view: 'selectCompany',
@@ -621,7 +621,6 @@ export default {
             e.stopPropagation();
             this.invoiceIndex = invoiceIndex
             Array.from(document.querySelectorAll('.dropdown__child')).forEach((dropdown,i)  => {
-                 
                 this.dropdownIndex = i
                 if(this.invoiceIndex === this.dropdownIndex) {
                     if(dropdown.classList.contains('show_dropdown')) {
@@ -669,6 +668,7 @@ export default {
             .get(
                 `${configObject.apiBaseUrl}/Company`, configObject.authConfig())
                 .then(res => {
+                    console.log(res.data.data)
                     this.companies = res.data.data
             })
             .catch(error => {

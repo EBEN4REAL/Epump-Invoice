@@ -14,7 +14,11 @@
                                         Create an invoice
                                     </router-link>
                                 </b-dropdown-item>
-                                <b-dropdown-item>Generate auto subscription</b-dropdown-item>
+                                <b-dropdown-item>
+                                    <router-link :to="{name: 'auto_subscription'}">
+                                        Generate auto subscription
+                                    </router-link>
+                                </b-dropdown-item>
                             </b-dropdown>
                         </div>
                     </div>
