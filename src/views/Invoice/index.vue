@@ -9,22 +9,10 @@
                             <h4 class="primary-color">New Invoice</h4>
                         </div>
                         <div class="col-md-5 text-right">
-                            <button class="rounded-button transparent mr-3">Preview</button>
+                            <button class="rounded-button transparent mr-3" @click="togglePageStatus">{{pageStatus === 'edit' ? 'Preview' : 'Edit'}}</button>
                             <button class="rounded-button colored text-white">Save and contiue</button>
                         </div>
-                        <div class="w-100 pl-3 pr-3">
-                            <!-- <form class="mt-3">
-                                <div class="mt-3">
-                                    <div class="form_input">
-                                        <select class="form-control">
-                                            <option>Businesss address and contact details, title, summary, and logo</option>
-                                            <option>Fuelmetrics</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form> -->
-                        </div>
-                        <div class="invoice-container mt-3">
+                        <div class="invoice-container mt-3"  v-if="pageStatus === 'edit'">
                             <div class="add_customer_conainer">
                                 <div class="invoice_customer p-3" v-if="view ==='customer'">
                                     <div class="bold-span grey-text">Bill to</div>
@@ -59,13 +47,14 @@
                                     </div>
                                 </div>
                                 <div class="invoice_details pr-3 pt-3">
-                                     <div class="row align-items-center ">
+                                    <div class="row align-items-center ">
                                         <div class="col-md-5 text-right">
                                             <label class="primary-color">Invoice number</label>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="">
-                                                <input type="text"  class="form-control" v-model="invoiceNumber"  />
+                                               <input type="text"  class="form-control" v-model="invoiceNumber"  />
+                                              
                                             </div>
                                         </div>
                                     </div> 
@@ -85,7 +74,18 @@
                                         </div>
                                         <div class="col-md-7">
                                             <div class="">
-                                               <Datepicker />
+                                                <vue-ctk-date-time-picker
+                                                    id="DateTimePicker"
+                                                    v-model="invoiceDate"
+                                                    color="#370F70"
+                                                    format="YYYY-MM-DD"
+                                                    formatted="DD/MM/YYYY"
+                                                    position="bottom"
+                                                    :onlyDate="true"
+                                                    :autoClose="true"
+                                                    :label="invoiceDateLabel"
+                                                    
+                                                />  
                                             </div>
                                         </div>
                                     </div>
@@ -95,7 +95,17 @@
                                         </div>
                                         <div class="col-md-7">
                                             <div class="">
-                                                <Datepicker />
+                                                <vue-ctk-date-time-picker
+                                                    id="DateTimePicker"
+                                                    v-model="paymentDueDate"
+                                                    color="#370F70"
+                                                    format="YYYY-MM-DD"
+                                                    formatted="DD/MM/YYYY"
+                                                    position="bottom"
+                                                    :onlyDate="true"
+                                                    :autoClose="true"
+                                                    :label="paymentDue"
+                                                />  
                                             </div>
                                         </div>
                                     </div>
@@ -126,7 +136,7 @@
                                     <span class="primary-color">Amount</span>
                                 </div>
                             </div>
-                        <div class="invoice__details" v-for="(invoice, invoiceIndex) in invoiceItems" :key="invoiceIndex">
+                            <div class="invoice__details" v-for="(invoice, invoiceIndex) in invoiceItems" :key="invoiceIndex">
                                 <div class="table-list-input" >
                                     <div class="invoice_items pr-2">
                                         <div class="row">
@@ -150,7 +160,6 @@
                                             <i class="fa fa-trash table-icon" aria-hidden="true" style="color: red" ></i>
                                         </span>
                                     </div>
-                                
                                     </div>
                                     <div class="p-3 tax-row">
                                         <div class="row align-items-center">
@@ -167,7 +176,7 @@
                                                             <div class="col-md-8">
                                                                 <div @click="showDropdownSearch($event, invoiceIndex)" class="dropdown-select-container cursor-pointer dropdown-parent"  style="width:86%">
                                                                     <div class="row align-items-center  height-100 pl-3 pr-3">
-                                                                        <div class="col-md-8">
+                                                                        <div class="col-md-10">
                                                                             <span class="dropdown-value">{{tax.name}} {{tax.percentage}}</span>
                                                                         </div>
                                                                         <div class="col-md-2">
@@ -175,7 +184,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="dropdown__content dropdown__child hide_dropdown"  style="width: 71.9%">
+                                                                <div class="dropdown__content dropdown__child hide_dropdown"  style="width: 77.5%">
                                                                     <div class="dropdown-select-wrapper m-3">
                                                                         <div class="row align-items-center">
                                                                             <div class="col-md-1 text-right padding-right-none">
@@ -223,8 +232,8 @@
                                                 <div class="col-md-1 text-right padding-right-none">
                                                     <i class="fa fa-search ml-2"  aria-hidden="true"></i>
                                                 </div>
-                                                <div class="col-md-10">
-                                                    <input type="text" autofocus  class="form-control dropdown-search" placeholder="Type a product"    />
+                                                <div class="col-md-11">
+                                                    <input type="text" autofocus  class="form-control dropdown-search" placeholder="Type a product"  style="width: 100%"   />
                                                 </div>
                                             </div>
                                        </div>
@@ -263,7 +272,121 @@
                             </div>
                           
                         </div>
-                       
+                        <div class="preview-container mt-3"  v-if="pageStatus === 'preview'">
+                            <div class="row  ivoice-preview-header-wrapper pb-4">
+                                <div class="col-md-12 text-right">
+                                    <div class="e-heading--title pt-3 pr-3">
+                                       INVOICE
+                                    </div>
+                                    <div class="e-heading--subtitle  pr-3">
+                                       Fuelmetrics
+                                    </div>
+                                    <div class="e-heading--para pt-2  pr-3">
+                                       Nigeria
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-space-between">
+                                <div class="col-md-7">
+                                    <div class="invoice_customer p-3" v-if="selectedCompany.name">
+                                        <div class="bold-span grey-text">Bill to</div>
+                                        <div class="bold-span mt-1">{{selectedCompany.name}}</div>
+                                        <div class="bold-span mt-1">{{selectedCompany.email}}</div>
+                                    </div>
+                                    <div class="invoice_customer p-5" v-if="!selectedCompany.name">
+                                        You have not added a customer
+                                    </div>
+                                </div>
+                                <div class="col-md-5 ">
+                                    <div class="row align-items-center pt-3">
+                                        <div class="col-md-5 text-right">
+                                            <label class="primary-color">Invoice number: </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="">
+                                                FM894634
+                                            </div>
+                                        </div>
+                                    </div> 
+                                    <div class="row align-items-center mt-1">
+                                        <div class="col-md-5 text-right">
+                                            <label class="primary-color">Invoice date</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="">
+                                               <small class="bold-span">{{invoiceDate}}</small> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mt-1">
+                                        <div class="col-md-5 text-right">
+                                            <label class="primary-color">Payment due: </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="">
+                                                <small class="bold-span">{{paymentDueDate}}</small> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mt-1">
+                                        <div class="col-md-5 text-right">
+                                            <label class="primary-color">Amount Due:</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="bold-span">
+                                                ₦ {{totalAmount}}.00
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                            <div class="preview-table  header  p-2 mt-2 pl-3 pr-3 ">
+                                <div class="invoice_items">
+                                    <span class="text-white">Items</span>
+                                </div>
+                                <div class="quantity">
+                                    <span class="text-white">Quantity</span>
+                                </div> 
+                                <div class="price">
+                                    <span class="text-white">Price</span>
+                                </div>
+                                <div class="amount text-right">
+                                    <span class="text-white">Amount</span>
+                                </div>
+                            </div>
+                            <div class="mt-2" v-for="(prod,i) in invoiceItems" :key="i" v-if="invoiceItems.length > 0">
+                                <div class="preview-table  p-2 pl-3 pr-3 ">
+                                    <div class="">
+                                        <span class="primary-color">{{prod.item}}</span>
+                                    </div>
+                                    <div class="">
+                                        <span class="primary-color">{{prod.quantity}}</span>
+                                    </div> 
+                                    <div class="">
+                                        <span class="">₦</span>{{prod.price}}.00</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="">₦</span>{{prod.price *  prod.quantity}}.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-center font-italic p-3"  v-if="invoiceItems.length ===  0">
+                               You have not added any items.
+                            </div>
+                            <div class="text-right mt-3  pr-3">
+                                <span class="primary-color mr-3 ">Sub Total: </span>
+                                <span class="primary-color ">&#8358; {{subTotal}}.00</span>
+                            </div>
+                            <div class="text-right mt-2 pr-3">
+                                <span class="primary-color mr-3 ">Total: </span>
+                                <span class="primary-color">&#8358; {{totalAmount}}.00</span>
+                            </div>
+                            <hr></hr>
+                             <div class="text-right mt-2 pr-3">
+                                <span class="primary-color mr-3 bold-span">Amount Due (NGN): </span>
+                                <span class="primary-color bold-span">&#8358; {{totalAmount}}.00</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             <div>
@@ -297,19 +420,26 @@ export default {
     },
     data() {
         return {
+            invoiceDateLabel: 'Invoice date',
+            paymentDue: 'Payment due',
             showDropdown: false,
             showTaxes: false,
             selectedTax: {
                 name: 'Tax 1',
                 value: 'tax1'
             },
-           
+            pageStatus: 'preview',
             companySearch: "",
             rate: 1,
             view: 'selectCompany',
             isButtonDisabled: false,
             scheduleDateTime: null,
             showLoader: false,
+            invoiceDate: this.invouceStartDate,
+            paymentDueDate: this.paymentDueStartDate,
+            paymentDueStartDate: this.$moment().format("MMMM D, YYYY"),
+            invouceStartDate: this.$moment().format("MMMM D, YYYY"),
+            pluginStartDate: this.$moment().format("D-M-YYYY"),
             tableProps: {
                 pageSettings: { pageSizes: [12, 50, 100, 200], pageCount: 4 },
                 toolbar: [],
@@ -468,9 +598,22 @@ export default {
             this.invoiceItems.forEach(el => {
                 el.quantity = val
             })
-        }
+        },
+        invoiceDate: function (newDate) {
+            if (newDate) {
+                this.invouceStartDate = this.$moment(newDate, "DD-MM-YYYY").format("MMMM D, YYYY")
+            }
+        },
+        paymentDueDate: function (newDate) {
+            if (newDate) {
+                this.paymentDueStartDate = this.$moment(newDate, "DD-MM-YYYY").format("MMMM D, YYYY")
+            }
+        },
     },
     methods: {
+        togglePageStatus() {
+            this.pageStatus === 'edit' ?  this.pageStatus = 'preview' : this.pageStatus = 'edit'
+        },
         addTax() {
             this.$modal.show('addTax')
         },
@@ -492,11 +635,6 @@ export default {
                     dropdown.classList.remove('show_dropdown')
                     dropdown.classList.add('hide_dropdown')
                 }
-                // document.addEventListener('mouseup', function (e) {
-                //     if (e.target != dropdown && e.target.parentNode != dropdown) {
-                //         dropdown.classList.remove('show-menu'); 
-                //     }
-                // } 
             })
         },  
         hideDropDown(e) {
@@ -543,9 +681,7 @@ export default {
         removeTax(invoiceIndex, taxIndex) {
             alert()
             let invoices = [...this.invoiceItems]
-            console.log(invoices)
             const invoice  = invoices.find((invoice,i) => invoiceIndex === i)
-            console.log(invoice)
             if(invoice.taxes.length > 1) {
                 invoice.taxes.splice(taxIndex, 1)
             }
