@@ -153,7 +153,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="">
+                <div class="position-relative">
                     <ejs-grid
                         v-show="!showLoader"
                         ref="dataGrid"
@@ -174,9 +174,10 @@
                             <e-column width="200" field="due" headerText="Due Date" ></e-column>
                             <e-column width="200" field="customer" headerText="Customer" ></e-column>
                             <e-column width="200" field="amountDue" headerText="Amount Due" ></e-column>
-                            
+                            <e-column :template="list_of_invoices_templates" headerText="Action" width="200"></e-column>
                         </e-columns>
                     </ejs-grid>
+                    <DropDown :details="details"/>
                 </div>
             </div>
         </MasterLayout>
@@ -189,6 +190,10 @@ import TableLoader from "@/components/tableLoader/index";
 import Datepicker from 'vuejs-datepicker';
 import {Page,Sort,Toolbar,Search, groupAggregates} from "@syncfusion/ej2-vue-grids";
 import Temp from '@/components/Templates/invoices';
+import DropDown from '@/components/Templates/Dropdown/dropdown.vue';
+import invoiceTemp from '@/components/Templates/list_of_invoices_template.vue';
+
+
 
 
 import Jquery from 'jquery';
@@ -199,7 +204,8 @@ export default {
     components: {
         MasterLayout,
         Datepicker,
-        TableLoader
+        TableLoader,
+        DropDown
     },
     provide: {
         grid: [Page, Sort, Toolbar, Search]
@@ -244,36 +250,52 @@ export default {
             companies: [],
             companyId:"select company",
             showDropdown: false,
+            details: {
+                queryStrings: { invoiceId: '' }, 
+                info: [ { name: 'Edit', link: '' }], 
+                delete: { hasDelete: true, deleteName: 'deleteInvoice', name: 'Delete', query: '' }
+                // delete: { hasDelete: true, deleteName: 'deleteCompany', arg: 'companyId'}
+            }, 
+            list_of_invoices_templates: function() {
+                return {
+                    template: invoiceTemp
+                };
+            },
             data: [
                 {
                     customer: 'Eben Oluwasegun',
                     due: '21-01-25',
                     status: 'overdue',
-                    amountDue: '₦ 3,284.00'
+                    amountDue: '₦ 3,284.00',
+                    index: 1,
                 },
                  {
                     customer: 'Omoruyi Isaac',
                     due: '21-01-25',
                     status: 'draft',
-                    amountDue: '₦ 3,284.00'
+                    amountDue: '₦ 3,284.00',
+                    index: 2,
                 },
                 {
                     customer: 'Olaitan Akinromade',
                     due: '21-01-25',
                     status: 'overdue',
-                    amountDue: '₦ 3,284.00'
+                    amountDue: '₦ 3,284.00',
+                    index: 3,
                 },
                 {
                     customer: 'Favour chi',
                     due: '21-01-25',
                     status: 'draft',
-                    amountDue: '₦ 3,284.00'
+                    amountDue: '₦ 3,284.00',
+                    index: 4,
                 },
                 {
                     customer: 'Tunde Ednut',
                     due: '21-01-25',
                     status: 'overdue',
-                    amountDue: '₦ 3,284.00'
+                    amountDue: '₦ 3,284.00',
+                    index: 5,
                 },
             ],
             copiedData: [
@@ -344,7 +366,18 @@ export default {
         }
     },
     created() {
+        this.$eventHub.$on('showInvoicesDropdown', (data) => {
+            const option = document.getElementById('myDropdown')
+            option.classList.add("show")
+            if ((data.index == this.copiedData.length &&  this.copiedData.length > 1) ) {
+                // const num = this.details.delete.hasDelete ? 1 : 0
+                // option.style.top = `${(((62 * (data.index - 1))) + 108 - (32 * ( this.details.info.length))).toString()}px`
+                option.style.top = `${((62 * data.index) + (100 - (data.index * 2))).toString()}px`
 
+            } else {
+                option.style.top = `${((62 * data.index) + (100 - (data.index * 2))).toString()}px`
+            }
+        })
     },
     methods: {
         changeStatus(status) {
@@ -360,7 +393,7 @@ export default {
                 this.data = data
             }
             if(status === 'all') {
-                this.allCount = this.copiedData.lenth
+                this.allCount = this.copiedData.length
                 this.data = this.copiedData
             }
         },

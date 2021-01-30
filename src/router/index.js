@@ -9,6 +9,7 @@ const AddProduct = () => import('../views/Products/addProducts.vue')
 const Invoice = () => import('../views/Invoice/index.vue')
 const Invoices = () => import('../views/Invoice/invoices.vue')
 const AutoSubscription = () => import('../views/Invoice/autoSubscription.vue')
+const InvoiceDetails = () => import('../views/Invoice/invoiceDetails.vue')
 
 
 Vue.use(VueRouter);
@@ -26,6 +27,15 @@ let routes = [
     path: "/auto-subscription",
     name: "auto_subscription",
     component: AutoSubscription,
+    meta: {
+        authorize: true,
+        authRoles: ['Admin']
+    }
+  },
+  {
+    path: "invoice-details",
+    name: "invoice_details",
+    component: InvoiceDetails,
     meta: {
         authorize: true,
         authRoles: ['Admin']

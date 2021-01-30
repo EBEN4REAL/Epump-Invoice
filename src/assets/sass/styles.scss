@@ -83,10 +83,10 @@ label{
     font-weight: 600;
     cursor: pointer;
     &:hover {
-      border-bottom: 3.5px solid lightgray;
+      border-bottom: 4px solid lightgray;
     }
     &.active {
-      border-bottom: 3.5px solid $primaryColor;
+      border-bottom: 4px solid $primaryColor;
     }
     span:first-child {
       font-size: 13px;
