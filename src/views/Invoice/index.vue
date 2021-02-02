@@ -109,16 +109,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="row align-items-center mt-2">
-                                        <div class="col-md-5 text-right">
-                                            <label class="primary-color">Rate</label>
-                                        </div>
-                                        <div class="col-md-7">
-                                            <div class="">
-                                                <input type="text"  class="form-control" v-model="rate"  />
-                                            </div>
-                                        </div>
-                                    </div> -->
                                 </div>
                             </div>
                             <div class="table-header mt-5">
@@ -196,7 +186,7 @@
                                                                         </div>
                                                                     </div>
                                                                     <ul class="dropdown-menu-list pb-3">
-                                                                        <li class="dropdown-list tax " v-for="(tax,i) in invoice.taxes" :key="i">{{tax.name}} {{tax.percentage}}</li>
+                                                                        <li class="dropdown-list tax " v-for="(tax,i) in taxes" :key="i" @click="selectTax(invoiceIndex,i, tax)">{{tax.name}} {{tax.percentage}}</li>
                                                                          <div class="text-center p-3 cursor-pointer"  @click="addTax">
                                                                                 <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
                                                                                 <span class="primary-color bold-span"  >Create new tax</span>
@@ -451,6 +441,29 @@ export default {
             selectedCompany: {},
             showCompanies: false,
             companyId:"select company",
+            taxes: [
+                {
+                    name: 'VAT 1',
+                    percentage: '7.5%',
+                    value: 'vat',
+                    taxAmount: '20,000.00',
+                    taxPrice: 500,
+                },
+                {
+                    name: 'VAT 2',
+                    percentage: '5%',
+                    value: 'vat',
+                    taxAmount: '20,000.00',
+                    taxPrice: 500,
+                },
+                {
+                    name: 'VAT 3',
+                    percentage: '15%',
+                    value: 'vat',
+                    taxAmount: '20,000.00',
+                    taxPrice: 500,
+                },
+            ],
             products: [
                 {
                     item: "Epump Go",
@@ -474,6 +487,7 @@ export default {
             invoiceItems: [ ],
             invoiceIndex: 0,
             dropdownIndex: 0,
+            lastTaxIndex: null
         }
     },
     mounted() {
@@ -617,6 +631,34 @@ export default {
         addTax() {
             this.$modal.show('addTax')
         },
+        selectTax(invoiceIndex, taxIndex, taxObject) {
+            let invoices = [...this.invoiceItems]
+            invoices.find((invoice,i) => {
+                let lastTaxIndex = (invoice.taxes.length) - 1
+                console.log(lastTaxIndex)
+                invoice.taxes.find((tax, index) => {
+                    if(taxIndex === index) {
+                        tax.name = `${taxObject.name}  ${taxObject.percentage}`
+                    }
+                    if(lastTaxIndex === index) {
+                        console.log(index)
+                        invoice.taxes.push({
+                            name: '',
+                            percentage: '',
+                            value: '',
+                            taxAmount: '0.00',
+                            taxPrice: 0,
+                        })
+                        Array.from(document.querySelectorAll('.dropdown__child')).forEach((dropdown,i)  => {
+                            dropdown.classList.remove('show_dropdown')
+                            dropdown.classList.add('hide_dropdown')
+                        })
+                    }
+                })
+            })
+           
+            this.invoiceItems = invoices
+        },
         showDropdownSearch(e, invoiceIndex) {
             e.stopPropagation();
             this.invoiceIndex = invoiceIndex
@@ -668,7 +710,6 @@ export default {
             .get(
                 `${configObject.apiBaseUrl}/Company`, configObject.authConfig())
                 .then(res => {
-                    console.log(res.data.data)
                     this.companies = res.data.data
             })
             .catch(error => {
@@ -679,7 +720,6 @@ export default {
             this.showCompanies = !this.showCompanies
         },
         removeTax(invoiceIndex, taxIndex) {
-            alert()
             let invoices = [...this.invoiceItems]
             const invoice  = invoices.find((invoice,i) => invoiceIndex === i)
             if(invoice.taxes.length > 1) {
@@ -701,7 +741,7 @@ export default {
                 amount: '',
                 taxes: [
                     {
-                        name: '',
+                        name: 'Select tax',
                         percentage: '',
                         value: '',
                         taxAmount: '0.00',

@@ -109,7 +109,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="row align-items-center mt-2">
+                                    <div class="row align-items-center mt-2">
                                         <div class="col-md-5 text-right">
                                             <label class="primary-color">Rate</label>
                                         </div>
@@ -118,7 +118,7 @@
                                                 <input type="text"  class="form-control" v-model="rate"  />
                                             </div>
                                         </div>
-                                    </div> -->
+                                    </div> 
                                 </div>
                             </div>
                             <div class="table-header mt-5">
