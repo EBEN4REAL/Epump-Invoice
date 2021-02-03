@@ -193,3 +193,33 @@
 .font-italic{
     font-style: italic;
 }
+.dropdown-slide {
+    background: white;
+    box-shadow: 0px 1.5px 3px #0000000D;
+    width: 98.5%;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid lightgray;
+    cursor: pointer;
+    &:hover {
+        background: #f0f4fa;
+    }
+}
+.dropdown-summary {
+    background: white;
+    width: 98.5%;
+    border: 1px solid lightgray;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding-left: 15px;
+    border-top-color: none;
+   
+}
+
+.summary-title {
+    ::placeholder {
+        color: #d3d3d330;
+        font-size: 25px;
+        font-style: italic;
+    }
+}

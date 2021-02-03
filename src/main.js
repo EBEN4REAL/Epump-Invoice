@@ -18,12 +18,16 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import { GridPlugin } from "@syncfusion/ej2-vue-grids";
 import VueSidebarMenu from 'vue-sidebar-menu'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
+import 'vue-search-select/dist/VueSearchSelect.css'
+
 
 Vue.use(VueSidebarMenu)
 
 Vue.config.productionTip = false
 
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
+
+
 
 Vue.use(VueAxios, axios);
 Vue.use(VModal)

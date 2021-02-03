@@ -12,6 +12,47 @@
                             <button class="rounded-button transparent mr-3" @click="togglePageStatus">{{pageStatus === 'edit' ? 'Preview' : 'Edit'}}</button>
                             <button class="rounded-button colored text-white">Save and contiue</button>
                         </div>
+                        <div class="dropdown-slide mt-3" @click="showSummary" v-if="pageStatus === 'edit' ">
+                            <div class="row align-items-center ">
+                                <div class="col-md-9">
+                                    <span class="primary-color bold-span">Invoice title and summary</span>
+                                </div>
+                                <div class="col-md-3 text-right">
+                                    <i class="fa fa-chevron-down primary color" aria-hidden="true" v-if="!summary"></i>
+                                    <i class="fa fa-chevron-up primary color" aria-hidden="true" v-if="summary"></i>
+                                </div>
+                              
+                            </div>
+                       </div>
+                        <div class="dropdown-summary" v-if="summary && pageStatus === 'edit' ">
+                            <div class="row align-items-center ">
+                                <div class="col-md-7 ">
+                                    <img src="@/assets/img/bill.png" width="250" class="pl-3" />
+                                </div>
+                                <div class="col-md-5 text-right py-5">
+                                    <div class="row ">
+                                        <div class="col-md-11">
+                                            <div class="summary-title">
+                                               <input type="text"  class="form-control" v-model="invoiceTitle" placeholder="Invoice Title" />
+                                            </div>
+                                        </div>
+                                    </div> 
+                                    <div class="row align-items-center mt-2">
+                                        <div class="col-md-11">
+                                            <div class="">
+                                               <input type="text"  class="form-control" v-model="invoiceSummary"  placeholder="Summary(e.g prject name, description of invoice)" />
+                                            </div>
+                                            <div class="e-heading--subtitle text-right mt-3">
+                                                <h5 class="bold-span">Fuelmetrics</h5>
+                                            </div>
+                                            <div class="e-heading--para mt-2  text-right">
+                                                <p class="bold-span">Nigeria</p>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                       </div>
                         <div class="invoice-container mt-3"  v-if="pageStatus === 'edit'">
                             <div class="add_customer_conainer">
                                 <div class="invoice_customer p-3" v-if="view ==='customer'">
@@ -157,50 +198,29 @@
                                                 <span class="primary-color bold-span">Edit income account</span>
                                             </div>
                                             <div class="col-md-7">
-                                                <div class="row align-items-center mb-2"  v-for="(tax,taxIndex) in invoice.taxes" :key="taxIndex">
-                                                    <div class="col-md-2 text-right">
+                                                <div class="row align-items-center mb-2"  v-for="(tax,taxIndex) in invoice.taxesArr" :key="taxIndex">
+                                                    <div class="col-md-1 text-right">
                                                         <span class="primary-color mr-2 bold-span">Tax</span>
                                                     </div>
-                                                    <div class="col-md-10">
+                                                    <div class="col-md-11">
                                                         <div class="row" >
                                                             <div class="col-md-8">
-                                                                <div @click="showDropdownSearch($event, invoiceIndex)" class="dropdown-select-container cursor-pointer dropdown-parent"  style="width:86%">
-                                                                    <div class="row align-items-center  height-100 pl-3 pr-3">
-                                                                        <div class="col-md-10">
-                                                                            <span class="dropdown-value">{{tax.name}} {{tax.percentage}}</span>
-                                                                        </div>
-                                                                        <div class="col-md-2">
-                                                                            <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                        </div>
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-md-10">
+                                                                        <model-select :options="options" v-model="tax.selectedTax"  placeholder="select tax"  />
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        <i class="fa fa-plus primary-color cursor-pointer" title="Add Tax" aria-hidden="true" @click="createTax(invoiceIndex,taxIndex)" v-if="taxIndex === (invoice.taxesArr.length) - 1"></i>
                                                                     </div>
                                                                 </div>
-                                                                <div class="dropdown__content dropdown__child hide_dropdown"  style="width: 77.5%">
-                                                                    <div class="dropdown-select-wrapper m-3">
-                                                                        <div class="row align-items-center">
-                                                                            <div class="col-md-1 text-right padding-right-none">
-                                                                                <i class="fa fa-search ml-2"  aria-hidden="true"></i>
-                                                                            </div>
-                                                                            <div class="col-md-10">
-                                                                                <input type="text" autofocus  class="form-control dropdown-search" placeholder="Search" style="width:80%"    />
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <ul class="dropdown-menu-list pb-3">
-                                                                        <li class="dropdown-list tax " v-for="(tax,i) in taxes" :key="i" @click="selectTax(invoiceIndex,i, tax)">{{tax.name}} {{tax.percentage}}</li>
-                                                                         <div class="text-center p-3 cursor-pointer"  @click="addTax">
-                                                                                <i class="fa fa-plus-circle mr-2 primary-color" aria-hidden="true"></i>
-                                                                                <span class="primary-color bold-span"  >Create new tax</span>
-                                                                        </div>
-                                                                    </ul>
-                                                                   
-                                                                </div>
+                                                               
                                                             </div>
                                                             <div class="col-md-4 text-right primary-color">
-                                                                <i class="fa fa-minus primary-color" aria-hidden="true" v-if="!tax.name"></i>
-                                                                <span class="primary-color bold-span mr-2"  v-if="tax.name">₦ {{tax.taxPrice}}.00</span>
-                                                                <span @click="removeTax(invoiceIndex,taxIndex)"  v-if="tax.name">
+                                                                <i class="fa fa-minus primary-color" aria-hidden="true" v-if="tax.selectedTax === 'select item'"></i>
+                                                                <span class="primary-color bold-span mr-2"  v-if="tax.selectedTax !== 'select item'">₦ {{tax.taxes.filter(el => el.value == tax.selectedTax).length > 0 ? tax.taxes.filter(el => el.value == tax.selectedTax)[0].taxPrice : 0}}.00</span>
+                                                                <span @click="removeTax(invoiceIndex,taxIndex)"  v-if="tax.selectedTax !== 'select item'">
                                                                     <i class="fa fa-trash table-icon" aria-hidden="true" style="color: red" ></i>
-                                                                </span>
+                                                                </span> 
                                                             </div>
                                                         </div>
                                                       
@@ -266,7 +286,10 @@
                             <div class="row  ivoice-preview-header-wrapper pb-4">
                                 <div class="col-md-12 text-right">
                                     <div class="e-heading--title pt-3 pr-3">
-                                       INVOICE
+                                       {{invoiceTitle}}
+                                    </div>
+                                    <div class="e-heading--subtitle pr-3">
+                                        <h5 class="bold-span">{{invoiceSummary}}</h5>
                                     </div>
                                     <div class="e-heading--subtitle  pr-3">
                                        Fuelmetrics
@@ -391,6 +414,8 @@ import TableLoader from "@/components/tableLoader/index";
 import Datepicker from 'vuejs-datepicker';
 import {Page,Sort,Toolbar,Search, groupAggregates} from "@syncfusion/ej2-vue-grids";
 import AddTax from "@/components/Modals/Products/addTax"
+import { ModelSelect } from 'vue-search-select'
+import { ModelListSelect } from 'vue-search-select'
 
 
 
@@ -403,13 +428,17 @@ export default {
         MasterLayout,
         Datepicker,
         TableLoader,
-        AddTax
+        AddTax,
+        ModelSelect,
+        ModelListSelect
     },
     provide: {
         grid: [Page, Sort, Toolbar, Search]
     },
     data() {
         return {
+            invoiceTitle: "Invoice Title",
+            invoiceSummary: "",
             invoiceDateLabel: 'Invoice date',
             paymentDue: 'Payment due',
             showDropdown: false,
@@ -418,6 +447,12 @@ export default {
                 name: 'Tax 1',
                 value: 'tax1'
             },
+            summary: false,
+            options: [
+                { value: '1', text: 'aa' + ' - ' + '1' },
+                { value: '2', text: 'ab' + ' - ' + '2' },
+                { value: '3', text: 'bc' + ' - ' + '3' },
+            ],
             pageStatus: 'edit',
             companySearch: "",
             rate: 1,
@@ -466,20 +501,19 @@ export default {
             ],
             products: [
                 {
-                    item: "Epump Go",
-                    priceFormatted: '100,000.00',
-                    priceAmount: 100000,
-                    description: "A device which connects pumps & tanks in your station  to our web platform",
+                    item: 'Epump Go',
+                    description: 'A device which connects pumps & tanks in your station  to our web platform',
                     quantity: 1,
                     price: 100000,
                     amount: 0,
-                    taxes: [
+                    taxesArr: [
                         {
-                            name: 'VAT',
-                            percentage: '7.5%',
-                            value: 'vat',
-                            taxAmount: '20,000.00',
-                            taxPrice: 500,
+                            selectedTax: '',
+                            taxes: [
+                                { value: 'vat', text: 'VAT (5%)',  taxAmount: '0.00', taxPrice: 500, },
+                                { value: 'vat1', text: 'VAT (7.5%)',taxAmount: '0.00', taxPrice: 1000, },
+                                { value: 'vat2', text: 'VAT (10.5%)' ,taxAmount: '0.00', taxPrice: 1500,},
+                                            ]
                         },
                     ],
                 }
@@ -487,7 +521,16 @@ export default {
             invoiceItems: [ ],
             invoiceIndex: 0,
             dropdownIndex: 0,
-            lastTaxIndex: null
+            lastTaxIndex: null,
+            item: {
+                value: '',
+                text: ''
+            },
+            options: [
+                { value: 'vat', text: 'VAT (5%)',  taxAmount: '0.00', taxPrice: 500, },
+                { value: 'vat1', text: 'VAT (7.5%)',taxAmount: '0.00', taxPrice: 1000, },
+                { value: 'vat2', text: 'VAT (10.5%)' ,taxAmount: '0.00', taxPrice: 1500,},
+            ]
         }
     },
     mounted() {
@@ -592,10 +635,17 @@ export default {
         },
         totalAmount() {
             return this.invoiceItems.reduce((acc,cur) => {
-                const taxesAmount = cur.taxes.reduce((amount, tax) => {
+                let taxList = []
+                let tax = cur.taxesArr.forEach((_tx, i) => {
+                    const item = this.options.filter(el => el.value === _tx.selectedTax)
+                    if(item.length > 0) {
+                        taxList.push(item[0])
+                    }
+                })
+                const taxesAmount = taxList.reduce((amount, tax) => {
                     return amount += tax.taxPrice
                 },0)
-                return acc += ((cur.quantity * cur.price)) + taxesAmount
+                return acc += ((cur.quantity * cur.price))  + taxesAmount
             }, 0)
         },
         subTotal() {
@@ -625,6 +675,9 @@ export default {
         },
     },
     methods: {
+        showSummary() {
+            this.summary = !this.summary
+        },
         togglePageStatus() {
             this.pageStatus === 'edit' ?  this.pageStatus = 'preview' : this.pageStatus = 'edit'
         },
@@ -635,13 +688,11 @@ export default {
             let invoices = [...this.invoiceItems]
             invoices.find((invoice,i) => {
                 let lastTaxIndex = (invoice.taxes.length) - 1
-                console.log(lastTaxIndex)
                 invoice.taxes.find((tax, index) => {
                     if(taxIndex === index) {
                         tax.name = `${taxObject.name}  ${taxObject.percentage}`
                     }
                     if(lastTaxIndex === index) {
-                        console.log(index)
                         invoice.taxes.push({
                             name: '',
                             percentage: '',
@@ -699,9 +750,6 @@ export default {
             this.invoiceItems.push(product)
             this.showDropdown = !this.showDropdown
         },
-        toggleTaxes() {
-            this.showTaxes = !this.showTaxes
-        },
         toggleDropdown() {
             this.showDropdown = !this.showDropdown
         },
@@ -722,8 +770,8 @@ export default {
         removeTax(invoiceIndex, taxIndex) {
             let invoices = [...this.invoiceItems]
             const invoice  = invoices.find((invoice,i) => invoiceIndex === i)
-            if(invoice.taxes.length > 1) {
-                invoice.taxes.splice(taxIndex, 1)
+            if(invoice.taxesArr.length > 1) {
+                invoice.taxesArr.splice(taxIndex, 1)
             }
         },
         removeItem(i) {
@@ -732,6 +780,21 @@ export default {
             this.invoiceItems = items
 
         },
+        createTax(invoiceIndex, TaxIndex) {
+            const invoices = [...this.invoiceItems]
+            let invoice = invoices.forEach((invoice,i) => {
+                if(i === invoiceIndex) {
+                    invoice.taxesArr.push({
+                        selectedTax: '',
+                        taxes: [
+                            { value: 'vat', text: 'VAT (5%)',  taxAmount: '0.00', taxPrice: 500, },
+                            { value: 'vat1', text: 'VAT (7.5%)',taxAmount: '0.00', taxPrice: 1000, },
+                            { value: 'vat2', text: 'VAT (10.5%)' ,taxAmount: '0.00', taxPrice: 1500,},
+                        ]
+                    })
+                }
+            })
+        },
         addItem() {
             this.invoiceItems.push({
                 item: '',
@@ -739,17 +802,16 @@ export default {
                 quantity: 1,
                 price: 0,
                 amount: '',
-                taxes: [
+                taxesArr: [
                     {
-                        name: 'Select tax',
-                        percentage: '',
-                        value: '',
-                        taxAmount: '0.00',
-                        taxPrice: 0,
+                        selectedTax: '',
+                        taxes: [
+                            { value: 'vat', text: 'VAT (5%)',  taxAmount: '0.00', taxPrice: 500, },
+                            { value: 'vat1', text: 'VAT (7.5%)',taxAmount: '0.00', taxPrice: 1000, },
+                            { value: 'vat2', text: 'VAT (10.5%)' ,taxAmount: '0.00', taxPrice: 1500,},
+                        ]
                     },
                 ],
-
-                
             })
             this.showDropdown = !this.showDropdown
         },
