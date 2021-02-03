@@ -25,7 +25,8 @@
                             </div>
                         </div>
                         <div class="mt-3 position-relative">
-                            <label>Sales Tax</label>
+                            <label>Sales Tax</label>  
+                            <!--<i class="fa fa-plus primary-color cursor-pointer ml-3" title="Add Tax" aria-hidden="true"></i>-->
                              <b-form-checkbox-group
                                 v-model="selected"
                                 :options="options"
