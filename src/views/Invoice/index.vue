@@ -3,7 +3,7 @@
         <AddTax />
         <MasterLayout>
             <div class="py-4" >
-                <div class="dialog-container" style="width: 80%">
+                <div class="dialog-container" style="width: 90%">
                     <div class="row">
                         <div class="col-md-7">
                             <h4 class="primary-color">New Invoice</h4>
@@ -27,10 +27,10 @@
                         <div class="dropdown-summary" v-if="summary && pageStatus === 'edit' ">
                             <div class="row align-items-center ">
                                 <div class="col-md-7 ">
-                                    <img src="@/assets/img/bill.png" width="250" class="pl-3" />
+                                    <img src="@/assets/img/fuelmetrics-png-transparent.png" width="350  " class="pl-3" />
                                 </div>
                                 <div class="col-md-5 text-right py-5">
-                                    <div class="row ">
+                                    <div class="row align-items-enter">
                                         <div class="col-md-11">
                                             <div class="summary-title">
                                                <input type="text"  class="form-control" v-model="invoiceTitle" placeholder="Invoice Title" />
@@ -172,18 +172,18 @@
                                     <div class="invoice_items pr-2">
                                         <div class="row">
                                             <div class="col-md-4 padding-right-none">
-                                                <input type="text"  class="form-control"  v-model="invoice.item" placeholder="Item name" />
+                                                <input type="text"  class="form-control":disabled="invoice.status === 'auto'"  v-model="invoice.item" placeholder="Item name" @focus="focusElement(invoiceIndex)" />
                                             </div>
                                             <div class="col-md-8">
-                                                <textarea  class="form-control" v-model="invoice.description" placeholder="Enter item description"  /></textarea>
+                                                <textarea @focus="focusElement(invoiceIndex)"   class="" v-model="invoice.description" placeholder="Enter item description"   /></textarea>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="quantity pr-2">
-                                        <input type="number"  class="form-control" v-model="invoice.quantity"   />
+                                        <input type="number"  class="form-control" v-model="invoice.quantity" @focus="focusElement(invoiceIndex)"    />
                                     </div> 
                                     <div class="price pr-2">
-                                        <input type="text" class="form-control" name="currency-field" id="currency" pattern="^\₦\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="" placeholder="price" v-model="invoice.price">
+                                        <input type="text" class="form-control" name="currency-field" id="currency" pattern="^\₦\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="" placeholder="price" v-model="invoice.price" @focus="focusElement(invoiceIndex)" >
                                     </div>
                                     <div class="amount">
                                         <span class="primary-color mr-2">&#8358;  {{invoice.quantity * invoice.price}}.00</span>
@@ -207,7 +207,7 @@
                                                             <div class="col-md-8">
                                                                 <div class="row align-items-center">
                                                                     <div class="col-md-10">
-                                                                        <model-select :options="options" v-model="tax.selectedTax"  placeholder="select tax"  />
+                                                                        <model-select :options="options" v-model="tax.selectedTax"  placeholder="select tax" @click="focusElement(invoiceIndex)"   />
                                                                     </div>
                                                                     <div class="col-md-2">
                                                                         <i class="fa fa-plus primary-color cursor-pointer" title="Add Tax" aria-hidden="true" @click="createTax(invoiceIndex,taxIndex)" v-if="taxIndex === (invoice.taxesArr.length) - 1"></i>
@@ -218,7 +218,7 @@
                                                             <div class="col-md-4 text-right primary-color">
                                                                 <i class="fa fa-minus primary-color" aria-hidden="true" v-if="tax.selectedTax === 'select item'"></i>
                                                                 <span class="primary-color bold-span mr-2"  v-if="tax.selectedTax !== 'select item'">₦ {{tax.taxes.filter(el => el.value == tax.selectedTax).length > 0 ? tax.taxes.filter(el => el.value == tax.selectedTax)[0].taxPrice : 0}}.00</span>
-                                                                <span @click="removeTax(invoiceIndex,taxIndex)"  v-if="tax.selectedTax !== 'select item'">
+                                                                <span @click="removeTax(invoiceIndex,taxIndex)"  v-if="invoice.taxesArr.length > 1">
                                                                     <i class="fa fa-trash table-icon" aria-hidden="true" style="color: red" ></i>
                                                                 </span> 
                                                             </div>
@@ -283,8 +283,11 @@
                           
                         </div>
                         <div class="preview-container mt-3"  v-if="pageStatus === 'preview'">
-                            <div class="row  ivoice-preview-header-wrapper pb-4">
-                                <div class="col-md-12 text-right">
+                            <div class="row  ivoice-preview-header-wrapper pb-4 align-items-center">
+                                <div class="col-md-4">
+                                    <img src="@/assets/img/fuelmetrics-png-transparent.png" width="150"  />
+                                </div>
+                                <div class="col-md-8 text-right">
                                     <div class="e-heading--title pt-3 pr-3">
                                        {{invoiceTitle}}
                                     </div>
@@ -415,7 +418,6 @@ import Datepicker from 'vuejs-datepicker';
 import {Page,Sort,Toolbar,Search, groupAggregates} from "@syncfusion/ej2-vue-grids";
 import AddTax from "@/components/Modals/Products/addTax"
 import { ModelSelect } from 'vue-search-select'
-import { ModelListSelect } from 'vue-search-select'
 
 
 
@@ -430,7 +432,6 @@ export default {
         TableLoader,
         AddTax,
         ModelSelect,
-        ModelListSelect
     },
     provide: {
         grid: [Page, Sort, Toolbar, Search]
@@ -502,10 +503,11 @@ export default {
             products: [
                 {
                     item: 'Epump Go',
-                    description: 'A device which connects pumps & tanks in your station  to our web platform',
+                    description: '',
                     quantity: 1,
                     price: 100000,
                     amount: 0,
+                    status:'auto',
                     taxesArr: [
                         {
                             selectedTax: '',
@@ -675,6 +677,15 @@ export default {
         },
     },
     methods: {
+        focusElement(elementIndex) {
+            Array.from(document.querySelectorAll('.invoice__details')).forEach((el,i) => {
+                if(elementIndex === i) {
+                    el.classList.add('inv-bg')
+                }else {
+                    el.classList.remove('inv-bg')
+                }
+            })
+        },
         showSummary() {
             this.summary = !this.summary
         },
@@ -802,6 +813,7 @@ export default {
                 quantity: 1,
                 price: 0,
                 amount: '',
+                status:'manual',
                 taxesArr: [
                     {
                         selectedTax: '',
@@ -814,6 +826,9 @@ export default {
                 ],
             })
             this.showDropdown = !this.showDropdown
+            if(this.invoiceItems.length == 1) {
+                document.querySelectorAll('.invoice__details')
+            }
         },
         refreshGrid() {
             this.$refs.dataGrid.refresh();

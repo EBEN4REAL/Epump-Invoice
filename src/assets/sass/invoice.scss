@@ -38,7 +38,7 @@
     width: 100%;
     padding: 15px 15px;
     border-bottom: 1px solid #370f7012;
-    background: #d5dfe8;
+    background: #f0f4fa;
     button {
         position: absolute;
         top: -26px;
@@ -102,9 +102,63 @@
 .invoice__details{
     .tax-row {
         // background:#d5dfe8 ;
-        border-bottom: 1px solid #370f7012;
+        border-bottom: 1px solid #370f7012 ;
     }
     padding-left: 15px 15px;
+    input {
+        height: auto !important;
+        &:focus {
+            box-shadow: 0 0 0 3px rgb(19, 106, 205 , 20%) !important;
+        }
+        min-height: 55px;
+    }
+    textarea {
+        &:focus {
+            box-shadow: 0 0 0 3px rgb(19, 106, 205 , 20%) !important;
+        }
+        &::placeholder {
+            font-size: 15px;
+        }
+        // display: inline-block;
+        // box-sizing: border-box;
+        // text-decoration: none;
+        // vertical-align: middle;
+        // outline: none;
+        // -webkit-appearance: none;
+        // -moz-appearance: none;
+        // appearance: none;
+        // border: 1px solid #b2c2cd;
+        // border-radius: 4px;
+        // cursor: text;
+        // padding: 8px 10px 6px;
+        // transition: border .1s linear;
+        // min-height: 46px;
+        // width: 100%;
+        // min-width: 160px;
+        // resize: none;
+        // overflow-y: hidden;
+        // overflow-y: auto;
+        display: inline-block;
+        box-sizing: border-box;
+        text-decoration: none;
+        vertical-align: middle;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border: 1px solid #b2c2cd;
+        padding-left: 5px;
+        padding-top: 5px;
+        border-radius: 4px;
+        cursor: text;
+        transition: border .1s linear;
+        min-height: 48px;
+        width: 100%;
+        min-width: 160px;
+        resize: none;
+        overflow-y: hidden;
+    }
+    
 }
 .invoice-banner {
     border: 1px solid #370f7012;
@@ -226,4 +280,7 @@
         font-size: 25px;
         font-style: italic;
     }
+}
+.inv-bg {
+    background: #f0f4fa;
 }

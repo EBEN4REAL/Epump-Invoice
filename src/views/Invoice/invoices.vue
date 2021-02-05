@@ -66,14 +66,29 @@
                                    <div class="dropdown-select-container cursor-pointer dropdown-parent" @click="toggleDropdown">
                                         <div class="row align-items-center  height-100 pl-3 pr-3">
                                             <div class="col-md-10">
-                                                <span class="dropdown-value">All customers</span>
+                                                <span class="dropdown-value">{{selectedCompany.name}}</span>
                                             </div>
                                             <div class="col-md-2">
                                                 <i class="fa fa-caret-down" aria-hidden="true"></i>
                                             </div>
                                         </div>
                                    </div>
-                                   <div class="dropdown__content" v-if="showDropdown">
+                                    <div class="dropdown__content" v-if="showDropdown">
+                                        <div class=" m-2" >
+                                            <div class="row align-items-center">
+                                                <div class="col-md-1 text-right padding-right-none">
+                                                    <i class="fa fa-search ml-2"  aria-hidden="true"></i>
+                                                </div>
+                                                <div class="col-md-11">
+                                                    <input type="search" autofocus  class="form-control dropdown-search" placeholder="Type a customer name"  v-model="companySearch"   />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="dropdown-menu-list">
+                                            <li class="dropdown-list cursor-po" v-for="(cp,i) in filteredCompanies" :key='i'   @click="selectCompany(cp)">{{cp.name}}</li>
+                                        </ul>
+                                    </div>
+                                   <!--<div class="dropdown__content" v-if="showDropdown">
                                        <div class="dropdown-select-wrapper m-3">
                                             <div class="row align-items-center">
                                                 <div class="col-md-1 text-right padding-right-none">
@@ -88,7 +103,7 @@
                                             <li class="dropdown-list cursor-po">Eben</li>
                                             <li class="dropdown-list">Temitop</li>
                                        </ul>
-                                   </div>
+                                   </div> -->
                                 </div>
                                 <div class="col-md-2 padding-right-none">
                                      <vue-ctk-date-time-picker
@@ -194,8 +209,6 @@ import DropDown from '@/components/Templates/Dropdown/dropdown.vue';
 import invoiceTemp from '@/components/Templates/list_of_invoices_template.vue';
 
 
-
-
 import Jquery from 'jquery';
 let $ = Jquery;
 
@@ -205,7 +218,7 @@ export default {
         MasterLayout,
         Datepicker,
         TableLoader,
-        DropDown
+        DropDown,
     },
     provide: {
         grid: [Page, Sort, Toolbar, Search]
@@ -232,6 +245,7 @@ export default {
                 };
             },
             toLabel: 'To',
+            selectedCompany: {name: 'All Customers'},
             isButtonDisabled: false,
             scheduleDateTime: null,
             showLoader: false,
@@ -248,13 +262,14 @@ export default {
             invoiceNumber: 1,
             showCompanies: false,
             companies: [],
+            companySearch: '',
             companyId:"select company",
             showDropdown: false,
+            companies: [],
             details: {
                 queryStrings: { invoiceId: '' }, 
                 info: [ { name: 'Edit', link: '' }], 
                 delete: { hasDelete: true, deleteName: 'deleteInvoice', name: 'Delete', query: '' }
-                // delete: { hasDelete: true, deleteName: 'deleteCompany', arg: 'companyId'}
             }, 
             list_of_invoices_templates: function() {
                 return {
@@ -359,6 +374,9 @@ export default {
         },
     },
     computed: {
+        filteredCompanies() {
+            return this.companies.filter(company => company.name.toLowerCase().includes(this.companySearch.toLowerCase()))
+        },
         totalAmount() {
             return this.invoiceItems.reduce((acc,cur) => {
                 return acc += ((cur.quantity * cur.price))
@@ -370,8 +388,6 @@ export default {
             const option = document.getElementById('myDropdown')
             option.classList.add("show")
             if ((data.index == this.copiedData.length &&  this.copiedData.length > 1) ) {
-                // const num = this.details.delete.hasDelete ? 1 : 0
-                // option.style.top = `${(((62 * (data.index - 1))) + 108 - (32 * ( this.details.info.length))).toString()}px`
                 option.style.top = `${((62 * data.index) + (100 - (data.index * 2))).toString()}px`
 
             } else {
@@ -380,6 +396,21 @@ export default {
         })
     },
     methods: {
+        getCompanies() {
+            this.axios
+            .get(
+                `${configObject.apiBaseUrl}/Company`, configObject.authConfig())
+                .then(res => {
+                    this.companies = res.data.data
+            })
+            .catch(error => {
+
+            });
+        },
+        selectCompany(company) {
+            this.selectedCompany = company
+            this.showDropdown = !this.showDropdown
+        },
         changeStatus(status) {
             this.activeStatus = status
             if(status === 'draft') {
@@ -407,6 +438,7 @@ export default {
                 `${configObject.apiBaseUrl}/Company`, configObject.authConfig())
                 .then(res => {
                     this.companies = res.data.data
+                    console.log(this.companies.data.data)
             })
             .catch(error => {
 
