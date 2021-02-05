@@ -80,7 +80,7 @@
                                                     <i class="fa fa-search ml-2"  aria-hidden="true"></i>
                                                 </div>
                                                 <div class="col-md-11">
-                                                    <input type="search" autofocus  class="form-control dropdown-search" placeholder="Type a customer name"  v-model="companySearch"   />
+                                                    <input type="search" autofocus  class="form-control dropdown-search" placeholder="Type a customer name"  v-model="companySearch"   style="box-shadow: none !important"  />
                                                 </div>
                                             </div>
                                         </div>
@@ -88,22 +88,6 @@
                                             <li class="dropdown-list cursor-po" v-for="(cp,i) in filteredCompanies" :key='i'   @click="selectCompany(cp)">{{cp.name}}</li>
                                         </ul>
                                     </div>
-                                   <!--<div class="dropdown__content" v-if="showDropdown">
-                                       <div class="dropdown-select-wrapper m-3">
-                                            <div class="row align-items-center">
-                                                <div class="col-md-1 text-right padding-right-none">
-                                                    <i class="fa fa-search ml-2"  aria-hidden="true"></i>
-                                                </div>
-                                                <div class="col-md-10">
-                                                    <input type="text" autofocus  class="form-control dropdown-search" placeholder="Type a customer name"    />
-                                                </div>
-                                            </div>
-                                       </div>
-                                       <ul class="dropdown-menu-list">
-                                            <li class="dropdown-list cursor-po">Eben</li>
-                                            <li class="dropdown-list">Temitop</li>
-                                       </ul>
-                                   </div> -->
                                 </div>
                                 <div class="col-md-2 padding-right-none">
                                      <vue-ctk-date-time-picker
@@ -348,6 +332,11 @@ export default {
         }
     },
     mounted() {
+        if(localStorage.getItem('invoiceCustomers')) {
+            this.companies = JSON.parse(localStorage.getItem('invoiceCustomers'))
+        }else {
+            this.getCompanies()
+        }  
         document.addEventListener('click' , (e) => {
             if(e.target.contains(document.querySelector('.dropdown__content'))) {
                 this.showDropdown = !this.showDropdown
@@ -402,6 +391,7 @@ export default {
                 `${configObject.apiBaseUrl}/Company`, configObject.authConfig())
                 .then(res => {
                     this.companies = res.data.data
+                    localStorage.setItem('invoiceCustomers', JSON.stringify(res.data.data))
             })
             .catch(error => {
 

@@ -138,7 +138,7 @@ input[type=number]:focus,
     display: none;
 }
 .form-control {
-    height: calc(1.79em + 0.75rem + 2px) !important;
+    height: calc(1.79em + 0.75rem + 0px) !important;
 }
 .show_dropdown {
     display: block !important;
@@ -255,7 +255,22 @@ input[type=number]:focus,
     // width: 87% !important;
   }
 
-  textarea {
-    height: auto !important;
-
+  .txta {
+    width: 100%;
+    max-width: 500px;
+    min-height: 30px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    overflow: hidden;
+    line-height: 1.4;
+    resize: none;
+    border: none !important;
+    &:focus {
+        box-shadow: 0 0 0 3px rgb(19, 106, 205 , 20%) !important;
+    }
+  }
+  .textareaSection {
+    .textarea {
+      height: auto !important;
+    }
   }

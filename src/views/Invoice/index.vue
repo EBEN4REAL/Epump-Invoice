@@ -170,12 +170,12 @@
                             <div class="invoice__details" v-for="(invoice, invoiceIndex) in invoiceItems" :key="invoiceIndex">
                                 <div class="table-list-input" >
                                     <div class="invoice_items pr-2">
-                                        <div class="row">
+                                        <div class="row textareaSection">
                                             <div class="col-md-4 padding-right-none">
-                                                <input type="text"  class="form-control":disabled="invoice.status === 'auto'"  v-model="invoice.item" placeholder="Item name" @focus="focusElement(invoiceIndex)" />
+                                                <input type="text"  class="form-control ":disabled="invoice.status === 'auto'"  v-model="invoice.item" placeholder="Item name" @focus="focusElement(invoiceIndex)" />
                                             </div>
                                             <div class="col-md-8">
-                                                <textarea @focus="focusElement(invoiceIndex)"   class="" v-model="invoice.description" placeholder="Enter item description"   /></textarea>
+                                                <textarea @keyup="processTextarea($event, invoiceIndex)"  class=""  v-model="invoice.description" placeholder="Enter item description" id="descTxa"  /></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -237,24 +237,25 @@
                                     </div>
                                    
                                     <div class="dropdown__content" style="top: -13px;" :class="[showDropdown ? 'show_dropdown' : 'hide_dropdown']">
-                                       <div class="dropdown-select-wrapper m-3">
+                                       <div class="dropdown-select-wrapper m-3 product-sec">
                                             <div class="row align-items-center">
                                                 <div class="col-md-1 text-right padding-right-none">
                                                     <i class="fa fa-search ml-2"  aria-hidden="true"></i>
                                                 </div>
                                                 <div class="col-md-11">
-                                                    <input type="text" autofocus  class="form-control dropdown-search" placeholder="Type a product"  style="width: 100%"   />
+                                                    <input type="text"   class="form-control dropdown-search" placeholder="Type a product"  style="width: 100%; box-shadow: none !important" v-model="productSearch"  />
+                                                   
                                                 </div>
                                             </div>
                                        </div>
                                       <ul class="">
-                                            <li class="dropdown-list " v-for="(prod,i) in products" :key="i" @click="selectItem(prod)">
+                                            <li class="dropdown-list " v-for="(prod,i) in filteredProducts" :key="i" @click="selectItem(prod)">
                                                 <div class="product-list">
                                                     <div>
                                                         <span class="primary-color">{{prod.item}}</span>
                                                     </div>
                                                     <div>
-                                                        ₦ {{prod.priceFormatted}}
+                                                        ₦ {{prod.price}}.00
                                                     </div>
                                                 </div>
                                             </li>
@@ -518,6 +519,42 @@ export default {
                                             ]
                         },
                     ],
+                },
+                {
+                    item: 'ATG',
+                    description: '',
+                    quantity: 1,
+                    price: 500000,
+                    amount: 0,
+                    status:'auto',
+                    taxesArr: [
+                        {
+                            selectedTax: '',
+                            taxes: [
+                                { value: 'vat', text: 'VAT (5%)',  taxAmount: '0.00', taxPrice: 500, },
+                                { value: 'vat1', text: 'VAT (7.5%)',taxAmount: '0.00', taxPrice: 1000, },
+                                { value: 'vat2', text: 'VAT (10.5%)' ,taxAmount: '0.00', taxPrice: 1500,},
+                                            ]
+                        },
+                    ],
+                },
+                {
+                    item: 'Deployment',
+                    description: '',
+                    quantity: 1,
+                    price: 500000,
+                    amount: 0,
+                    status:'auto',
+                    taxesArr: [
+                        {
+                            selectedTax: '',
+                            taxes: [
+                                { value: 'vat', text: 'VAT (5%)',  taxAmount: '0.00', taxPrice: 500, },
+                                { value: 'vat1', text: 'VAT (7.5%)',taxAmount: '0.00', taxPrice: 1000, },
+                                { value: 'vat2', text: 'VAT (10.5%)' ,taxAmount: '0.00', taxPrice: 1500,},
+                                            ]
+                        },
+                    ],
                 }
             ],
             invoiceItems: [ ],
@@ -528,6 +565,7 @@ export default {
                 value: '',
                 text: ''
             },
+            productSearch: '',
             options: [
                 { value: 'vat', text: 'VAT (5%)',  taxAmount: '0.00', taxPrice: 500, },
                 { value: 'vat1', text: 'VAT (7.5%)',taxAmount: '0.00', taxPrice: 1000, },
@@ -536,102 +574,23 @@ export default {
         }
     },
     mounted() {
-        this.getCompanies()
+       
+        if(localStorage.getItem('invoiceCustomers')) {
+            this.companies = JSON.parse(localStorage.getItem('invoiceCustomers'))
+        }else {
+            this.getCompanies()
+        }   
         Array.from(document.getElementsByTagName('input')).forEach(input => {
             if(!Array.from(input.classList).includes('form-control')) {
                 input.classList.add('form-control')
             }
         })
-     
-     
-        // Jquery Dependency
-
-        $("input[data-type='currency']").on({
-            keyup: function() {
-            formatCurrency($(this));
-            },
-            blur: function() { 
-            formatCurrency($(this), "blur");
-            }
-        });
-
-
-        function formatNumber(n) {
-        // format number 1000000 to 1,234,567
-        return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        }
-
-
-        function formatCurrency(input, blur) {
-        // appends $ to value, validates decimal side
-        // and puts cursor back in right position.
         
-        // get input value
-        var input_val = input.val();
-        
-        // don't validate empty input
-        if (input_val === "") { return; }
-        
-        // original length
-        var original_len = input_val.length;
-
-        // initial caret position 
-        var caret_pos = input.prop("selectionStart");
-            
-        // check for decimal
-        if (input_val.indexOf(".") >= 0) {
-
-            // get position of first decimal
-            // this prevents multiple decimals from
-            // being entered
-            var decimal_pos = input_val.indexOf(".");
-
-            // split number by decimal point
-            var left_side = input_val.substring(0, decimal_pos);
-            var right_side = input_val.substring(decimal_pos);
-
-            // add commas to left side of number
-            left_side = formatNumber(left_side);
-
-            // validate right side
-            right_side = formatNumber(right_side);
-            
-            // On blur make sure 2 numbers after decimal
-            if (blur === "blur") {
-            right_side += "00";
-            }
-            
-            // Limit decimal to only 2 digits
-            right_side = right_side.substring(0, 2);
-
-            // join number by .
-            input_val = "₦" + left_side + "." + right_side;
-
-        } else {
-            // no decimal entered
-            // add commas to number
-            // remove all non-digits
-            input_val = formatNumber(input_val);
-            input_val = "₦" + input_val;
-            
-            // final formatting
-            if (blur === "blur") {
-            input_val += ".00";
-            }
-        }
-        
-        // send updated string to input
-        input.val(input_val);
-
-        // put caret back in the right position
-        var updated_len = input_val.length;
-        caret_pos = updated_len - original_len + caret_pos;
-        input[0].setSelectionRange(caret_pos, caret_pos);
-        }
-
-
     },
     computed: {
+        filteredProducts() {
+            return this.products.filter(product => product.item.toLowerCase().includes(this.productSearch.toLowerCase()))
+        },
         filteredCompanies() {
             return this.companies.filter(company => company.name.toLowerCase().includes(this.companySearch.toLowerCase()))
         },
@@ -686,6 +645,11 @@ export default {
                 }
             })
         },
+        processTextarea($event, elementIndex) {
+            this.focusElement(elementIndex)
+            $event.target.style.height = 'calc(1.5em + 0.75rem + 1px)';
+            $event.target.style.height =  $event.target.scrollHeight + 3 + 'px';
+        },
         showSummary() {
             this.summary = !this.summary
         },
@@ -695,51 +659,6 @@ export default {
         addTax() {
             this.$modal.show('addTax')
         },
-        selectTax(invoiceIndex, taxIndex, taxObject) {
-            let invoices = [...this.invoiceItems]
-            invoices.find((invoice,i) => {
-                let lastTaxIndex = (invoice.taxes.length) - 1
-                invoice.taxes.find((tax, index) => {
-                    if(taxIndex === index) {
-                        tax.name = `${taxObject.name}  ${taxObject.percentage}`
-                    }
-                    if(lastTaxIndex === index) {
-                        invoice.taxes.push({
-                            name: '',
-                            percentage: '',
-                            value: '',
-                            taxAmount: '0.00',
-                            taxPrice: 0,
-                        })
-                        Array.from(document.querySelectorAll('.dropdown__child')).forEach((dropdown,i)  => {
-                            dropdown.classList.remove('show_dropdown')
-                            dropdown.classList.add('hide_dropdown')
-                        })
-                    }
-                })
-            })
-           
-            this.invoiceItems = invoices
-        },
-        showDropdownSearch(e, invoiceIndex) {
-            e.stopPropagation();
-            this.invoiceIndex = invoiceIndex
-            Array.from(document.querySelectorAll('.dropdown__child')).forEach((dropdown,i)  => {
-                this.dropdownIndex = i
-                if(this.invoiceIndex === this.dropdownIndex) {
-                    if(dropdown.classList.contains('show_dropdown')) {
-                        dropdown.classList.remove('show_dropdown')
-                        dropdown.classList.add('hide_dropdown')
-                    }else {
-                        dropdown.classList.add('show_dropdown')
-                        dropdown.classList.remove('hide_dropdown')
-                    }
-                }else {
-                    dropdown.classList.remove('show_dropdown')
-                    dropdown.classList.add('hide_dropdown')
-                }
-            })
-        },  
         hideDropDown(e) {
             const classes = Array.from(e.target.classList)
             if (classes.includes('dropdown__content') || classes.includes('add_custoemr_card')) {
@@ -760,6 +679,7 @@ export default {
             product.quantity = this.rate
             this.invoiceItems.push(product)
             this.showDropdown = !this.showDropdown
+            this.productSearch = ''
         },
         toggleDropdown() {
             this.showDropdown = !this.showDropdown
@@ -770,6 +690,7 @@ export default {
                 `${configObject.apiBaseUrl}/Company`, configObject.authConfig())
                 .then(res => {
                     this.companies = res.data.data
+                    localStorage.setItem('invoiceCustomers', JSON.stringify(res.data.data))
             })
             .catch(error => {
 
